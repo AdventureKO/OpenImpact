@@ -1,0 +1,141 @@
+{
+  "fundraisers": [
+    {
+      "id": "prj-1",
+      "name": "Clean Water for Village A",
+      "organizer": "Hope Foundation",
+      "writer": "Hope Foundation",
+      "current": 4200,
+      "goal": 10000,
+      "milestones": [
+        { "title": "Drilling Complete", "note": "Borehole completed", "completed": false },
+        { "title": "Filtration Installed", "note": "Filters for 500 families", "completed": false }
+      ]
+    },
+    {
+      "id": "prj-2",
+      "name": "School Supplies Drive",
+      "organizer": "BrightStart",
+      "writer": "BrightStart Team",
+      "current": 1850,
+      "goal": 3000,
+      "milestones": [
+        { "title": "Collect Supplies", "note": "Collect 1,000 notebooks", "completed": true },
+        { "title": "Distribute", "note": "Distribution in 3 towns", "completed": false }
+      ]
+    },
+    {
+      "id": "prj-3",
+      "name": "Reforestation - Plant 5,000 Trees",
+      "organizer": "GreenRoots",
+      "writer": "GreenRoots Org",
+      "current": 720,
+      "goal": 5000,
+      "milestones": [
+        { "title": "Seedlings Procured", "note": "2,000 seedlings ready", "completed": true },
+        { "title": "Planting Phase 1", "note": "Planting in Zone 4", "completed": false }
+      ]
+    },
+    {
+      "id": "prj-4",
+      "name": "Community Health Clinic",
+      "organizer": "CareNow",
+      "writer": "CareNow Team",
+      "current": 3000,
+      "goal": 12000,
+      "milestones": []
+    }
+    ,
+    {
+      "id": "prj-5",
+      "name": "Emergency Relief Fund",
+      "organizer": "ReliefWorks",
+      "writer": "ReliefWorks Team",
+      "current": 5400,
+      "goal": 20000,
+      "milestones": []
+    },
+    {
+      "id": "prj-6",
+      "name": "Feeding Families Initiative",
+      "organizer": "Meals for All",
+      "writer": "Meals for All",
+      "current": 1200,
+      "goal": 8000,
+      "milestones": []
+    },
+    {
+      "id": "prj-7",
+      "name": "Girls' Education Scholarships",
+      "organizer": "BrightFutures",
+      "writer": "BrightFutures",
+      "current": 2300,
+      "goal": 15000,
+      "milestones": []
+    },
+    {
+      "id": "prj-8",
+      "name": "Mobile Medical Vans",
+      "organizer": "CareMobile",
+      "writer": "CareMobile Org",
+      "current": 4100,
+      "goal": 18000,
+      "milestones": []
+    },
+    {
+      "id": "prj-9",
+      "name": "Clean Oceans Campaign",
+      "organizer": "BluePlanet",
+      "writer": "BluePlanet Team",
+      "current": 980,
+      "goal": 10000,
+      "milestones": []
+    },
+    {
+      "id": "prj-10",
+      "name": "Refugee Support Shelter",
+      "organizer": "SafeHarbor",
+      "writer": "SafeHarbor",
+      "current": 6100,
+      "goal": 25000,
+      "milestones": []
+    },
+    {
+      "id": "prj-11",
+      "name": "Microloans for Startups",
+      "organizer": "SeedFinance",
+      "writer": "SeedFinance",
+      "current": 2750,
+      "goal": 12000,
+      "milestones": []
+    },
+    {
+      "id": "prj-12",
+      "name": "Senior Care Support",
+      "organizer": "GoldenYears",
+      "writer": "GoldenYears",
+      "current": 900,
+      "goal": 6000,
+      "milestones": []
+    },
+    {
+      "id": "prj-13",
+      "name": "Tech Access for Schools",
+      "organizer": "ConnectED",
+      "writer": "ConnectED",
+      "current": 1600,
+      "goal": 10000,
+      "milestones": []
+    },
+    {
+      "id": "prj-14",
+      "name": "Mental Health Outreach",
+      "organizer": "MindCare",
+      "writer": "MindCare",
+      "current": 450,
+      "goal": 7000,
+      "milestones": []
+    }
+  ]
+}
+

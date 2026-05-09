@@ -5,25 +5,38 @@
 
 import { Platform } from 'react-native';
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
-
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    text: '#0f1720',
+    background: '#fffefc',
+    tint: '#ff7a59',
+    icon: '#5b6b6b',
+    tabIconDefault: '#8b9aa0',
+    tabIconSelected: '#ff7a59',
+    // new palette
+    primary: '#ff7a59', // warm coral
+    secondary: '#4ecdc4', // teal
+    accent: '#556270',
+    success: '#2ecc71',
+    danger: '#e74c3c',
+    buttonText: '#ffffff',
+    surface: '#ffffff',
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    text: '#F5F7F6',
+    background: '#0f1720',
+    tint: '#ff9b7a',
+    icon: '#9ba1a6',
+    tabIconDefault: '#9ba1a6',
+    tabIconSelected: '#ff9b7a',
+    // new palette (dark variants)
+    primary: '#ff9b7a',
+    secondary: '#6fe8df',
+    accent: '#98a8ad',
+    success: '#35c56a',
+    danger: '#ff6b6b',
+    buttonText: '#0f1720',
+    surface: '#121619',
   },
 };
 
@@ -51,3 +64,4 @@ export const Fonts = Platform.select({
     mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
   },
 });
+
