@@ -136,7 +136,8 @@ export default function MyImpactScreen() {
       </View>
       <Text style={[styles.title, { color: text }]}>My Impact</Text>
       <Text style={[styles.sub, { color: secondary }]}>
-        See how your donations create measurable impact—from gift to verified outcome.
+        See how your donations create measurable impact—from gift to verified
+        outcome.
       </Text>
 
       {!auth?.user ? (
@@ -296,7 +297,13 @@ export default function MyImpactScreen() {
   );
 }
 
-const styles = StyleSheet.create({\n  wrap: { flex: 1, padding: 16, paddingTop: 12 },\n  header: { marginBottom: 12 },\n  back: { marginBottom: 8 },\n  title: { fontSize: 24, fontWeight: \"800\", marginBottom: 8 },\n  sub: { fontSize: 14, lineHeight: 20, marginBottom: 16 },\n  card: {
+const styles = StyleSheet.create({
+  wrap: { flex: 1, padding: 16, paddingTop: 12 },
+  header: { marginBottom: 12 },
+  back: { marginBottom: 8 },
+  title: { fontSize: 24, fontWeight: "800", marginBottom: 8 },
+  sub: { fontSize: 14, lineHeight: 20, marginBottom: 16 },
+  card: {
     backgroundColor: "#fff",
     padding: 14,
     borderRadius: 12,
