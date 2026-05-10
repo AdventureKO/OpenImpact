@@ -210,159 +210,160 @@ export default function TrackScreen() {
       .sort((a, b) => b.date - a.date);
 
   return (
-    <View style={{ flex: 1, padding: 16 }}>
-      <Text style={{ fontSize: 20, fontWeight: "700", marginBottom: 8 }}>
-        Track Donations
-      </Text>
-      <Text style={{ color: "#666", marginBottom: 12 }}>
-        Follow progress, milestones, photos and updates from causes you care
-        about.
-      </Text>
+    <View style={{ flex: 1 }}>
+      <FlatList
+        ListHeaderComponent={
+          <View style={{ padding: 16 }}>
+            <Text style={{ fontSize: 20, fontWeight: "700", marginBottom: 8 }}>
+              Track Donations
+            </Text>
+            <Text style={{ color: "#666", marginBottom: 12 }}>
+              Follow progress, milestones, photos and updates from causes you
+              care about.
+            </Text>
 
-      {auth?.user && myDonations.length > 0 ? (
-        <View
-          style={{
-            marginBottom: 16,
-            padding: 12,
-            backgroundColor: "#f8fafc",
-            borderRadius: 10,
-            borderWidth: 1,
-            borderColor: "#e2e8f0",
-          }}
-        >
-          <Text style={{ fontWeight: "800", marginBottom: 8, color: text }}>
-            Your contribution journey
-          </Text>
-          <Text style={{ fontSize: 12, color: "#64748b", marginBottom: 10 }}>
-            Each donation moves through collected → allocated → purchasing →
-            deployed → impact verified (demo progression).
-          </Text>
-          {myDonations.slice(0, 8).map((d) => {
-            const donationDate = new Date(
-              parseInt(d.id.split("-")[1]) || Date.now(),
-            );
-            const dateStr = donationDate.toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-              year:
-                donationDate.getFullYear() !== new Date().getFullYear()
-                  ? "numeric"
-                  : undefined,
-            });
-            const timeStr = donationDate.toLocaleTimeString("en-US", {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true,
-            });
-
-            return (
+            {auth?.user && myDonations.length > 0 ? (
               <View
-                key={d.id}
                 style={{
-                  marginBottom: 14,
-                  paddingBottom: 12,
-                  borderBottomWidth: StyleSheet.hairlineWidth,
-                  borderBottomColor: "#cbd5e1",
+                  marginBottom: 16,
+                  padding: 12,
+                  backgroundColor: "#f8fafc",
+                  borderRadius: 10,
+                  borderWidth: 1,
+                  borderColor: "#e2e8f0",
                 }}
               >
                 <Text
-                  style={{ fontWeight: "700", color: text, marginBottom: 4 }}
+                  style={{ fontWeight: "800", marginBottom: 8, color: text }}
                 >
-                  ${Number(d.amount || 0).toFixed(2)} → Cause{" "}
-                  {String(d.projectId || "—")}
+                  Your contribution journey
                 </Text>
                 <Text
-                  style={{ fontSize: 11, color: "#64748b", marginBottom: 2 }}
+                  style={{ fontSize: 12, color: "#64748b", marginBottom: 10 }}
                 >
-                  📅 {dateStr} at {timeStr}
+                  Each donation moves through collected → allocated → purchasing
+                  → deployed → impact verified (demo progression).
                 </Text>
-                <Text
-                  style={{ fontSize: 11, color: "#64748b", marginBottom: 6 }}
-                >
-                  {d.allocationCategory
-                    ? `📌 Use: ${d.allocationCategory}`
-                    : "📌 Use: pending allocation from organization"}
-                </Text>
-                <DonationJourneyBar currentStep={d.journeyStep ?? 0} />
-                {(d.journeyStep ?? 0) < 4 ? (
-                  <TouchableOpacity
-                    onPress={async () => {
-                      await advanceDonationJourney(auth.user, d.id);
-                      await reloadMyDonations();
-                    }}
-                    style={{
-                      marginTop: 8,
-                      alignSelf: "flex-start",
-                      backgroundColor: "#e0f2fe",
-                      paddingHorizontal: 10,
-                      paddingVertical: 6,
-                      borderRadius: 8,
-                    }}
-                  >
-                    <Text
+                {myDonations.slice(0, 8).map((d) => {
+                  const donationDate = new Date(
+                    parseInt(d.id.split("-")[1]) || Date.now(),
+                  );
+                  const dateStr = donationDate.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year:
+                      donationDate.getFullYear() !== new Date().getFullYear()
+                        ? "numeric"
+                        : undefined,
+                  });
+                  const timeStr = donationDate.toLocaleTimeString("en-US", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                  });
+
+                  return (
+                    <View
+                      key={d.id}
                       style={{
-                        fontSize: 12,
-                        fontWeight: "700",
-                        color: "#0369a1",
+                        marginBottom: 14,
+                        paddingBottom: 12,
+                        borderBottomWidth: StyleSheet.hairlineWidth,
+                        borderBottomColor: "#cbd5e1",
                       }}
                     >
-                      Simulate next stage (demo)
-                    </Text>
-                  </TouchableOpacity>
-                ) : (
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      color: "#059669",
-                      marginTop: 6,
-                      fontWeight: "600",
-                    }}
-                  >
-                    Impact trail complete
-                  </Text>
-                )}
+                      <Text
+                        style={{
+                          fontWeight: "700",
+                          color: text,
+                          marginBottom: 4,
+                        }}
+                      >
+                        ${Number(d.amount || 0).toFixed(2)} → Cause{" "}
+                        {String(d.projectId || "—")}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 11,
+                          color: "#64748b",
+                          marginBottom: 2,
+                        }}
+                      >
+                        📅 {dateStr} at {timeStr}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 11,
+                          color: "#64748b",
+                          marginBottom: 6,
+                        }}
+                      >
+                        {d.allocationCategory
+                          ? `📌 Use: ${d.allocationCategory}`
+                          : "📌 Use: pending allocation from organization"}
+                      </Text>
+                      <DonationJourneyBar currentStep={d.journeyStep ?? 0} />
+                      {(d.journeyStep ?? 0) < 4 ? (
+                        <TouchableOpacity
+                          onPress={async () => {
+                            await advanceDonationJourney(auth.user, d.id);
+                            await reloadMyDonations();
+                          }}
+                          style={{
+                            marginTop: 8,
+                            alignSelf: "flex-start",
+                            backgroundColor: "#e0f2fe",
+                            paddingHorizontal: 10,
+                            paddingVertical: 6,
+                            borderRadius: 8,
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 12,
+                              fontWeight: "700",
+                              color: "#0369a1",
+                            }}
+                          >
+                            Simulate next stage (demo)
+                          </Text>
+                        </TouchableOpacity>
+                      ) : (
+                        <Text
+                          style={{
+                            fontSize: 12,
+                            color: "#059669",
+                            marginTop: 6,
+                            fontWeight: "600",
+                          }}
+                        >
+                          Impact trail complete
+                        </Text>
+                      )}
+                    </View>
+                  );
+                })}
               </View>
-            );
-          })}
-        </View>
-      ) : null}
+            ) : null}
 
-      <View style={{ marginBottom: 12 }}>
-        <TextInput
-          placeholder="Search causes, organizers, or id"
-          value={query}
-          onChangeText={setQuery}
-          style={{
-            borderWidth: 1,
-            borderColor: "#eee",
-            padding: 8,
-            borderRadius: 8,
-            backgroundColor: bg,
-            color: text,
-          }}
-          placeholderTextColor={"#888"}
-        />
-      </View>
-      <View style={{ flexDirection: "row", marginBottom: 12 }}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Milestones")}
-          style={{
-            padding: 8,
-            backgroundColor: "#eee",
-            borderRadius: 6,
-            marginRight: 8,
-          }}
-        >
-          <Text>Milestones</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Analytics")}
-          style={{ padding: 8, backgroundColor: "#eee", borderRadius: 6 }}
-        >
-          <Text>Analytics</Text>
-        </TouchableOpacity>
-      </View>
-      <FlatList
+            <View style={{ marginBottom: 12 }}>
+              <TextInput
+                placeholder="Search causes, organizers, or id"
+                value={query}
+                onChangeText={setQuery}
+                style={{
+                  borderWidth: 1,
+                  borderColor: "#eee",
+                  padding: 8,
+                  borderRadius: 8,
+                  backgroundColor: bg,
+                  color: text,
+                }}
+                placeholderTextColor={"#888"}
+              />
+            </View>
+          </View>
+        }
         data={filtered}
         keyExtractor={(item, index) => item?.id?.toString() ?? `f-${index}`}
         renderItem={({ item }) => {
@@ -563,75 +564,12 @@ export default function TrackScreen() {
                       ) : null}
                     </View>
                   ))}
-
-                  <Text style={{ fontWeight: "700", marginTop: 8 }}>
-                    Photos
-                  </Text>
-                  <View
-                    style={{
-                      height: 100,
-                      borderRadius: 8,
-                      backgroundColor: "#eef2ff",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginBottom: 8,
-                    }}
-                  >
-                    <Text style={{ color: "#444" }}>
-                      Map / Location Placeholder
-                    </Text>
-                  </View>
-
-                  <View
-                    style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}
-                  >
-                    <TouchableOpacity
-                      onPress={() =>
-                        navigation.navigate("FundraiserDetail", { id: item.id })
-                      }
-                      style={{
-                        padding: 8,
-                        backgroundColor: "#eee",
-                        borderRadius: 6,
-                        marginRight: 8,
-                      }}
-                    >
-                      <Text>Open Cause</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() =>
-                        navigation.navigate(
-                          "OrgCauseDetail" as never,
-                          { id: String(item.id) } as never,
-                        )
-                      }
-                      style={{
-                        padding: 8,
-                        backgroundColor: "#dbeafe",
-                        borderRadius: 6,
-                        marginRight: 8,
-                      }}
-                    >
-                      <Text>Transparency feed</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() =>
-                        navigation.navigate("Donate", { id: item.id })
-                      }
-                      style={{
-                        padding: 8,
-                        backgroundColor: "#ffd39b",
-                        borderRadius: 6,
-                      }}
-                    >
-                      <Text>Donate / Give</Text>
-                    </TouchableOpacity>
-                  </View>
                 </View>
               )}
             </View>
           );
         }}
+        contentContainerStyle={{ paddingBottom: 20, paddingHorizontal: 16 }}
       />
 
       <Modal
