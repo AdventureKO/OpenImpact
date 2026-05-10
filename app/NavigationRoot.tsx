@@ -14,11 +14,13 @@ import FundraiserDetail from "../components/FundraiserDetail";
 import { AuthContext } from "../context/AuthContext";
 import * as storage from "../utils/storage";
 import Analytics from "./analytics";
+import AnalyticsDashboard from "./analytics-dashboard";
 import Budget from "./budget";
 import Dashboard from "./dashboard";
 import Donate from "./donate";
 import DonateConfirm from "./donate/confirm";
 import ExportImpact from "./export-impact";
+import ImpactGoals from "./impact-goals";
 import Milestones from "./milestones";
 import MyImpact from "./my-impact";
 import Notifications from "./notifications";
@@ -210,6 +212,8 @@ export default function RootLayout() {
       />
       <Stack.Screen name="MyImpact" component={MyImpact} />
       <Stack.Screen name="ExportImpact" component={ExportImpact} />
+      <Stack.Screen name="ImpactGoals" component={ImpactGoals} />
+      <Stack.Screen name="AnalyticsDashboard" component={AnalyticsDashboard} />
       <Stack.Screen name="OrgCauseDetail" component={OrgCauseDetail} />
     </Stack.Navigator>
   );

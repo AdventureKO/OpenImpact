@@ -132,6 +132,7 @@ export default function MyImpactScreen() {
           justifyContent: "space-between",
           alignItems: "center",
           marginBottom: 12,
+          gap: 8,
         }}
       >
         <TouchableOpacity
@@ -141,15 +142,41 @@ export default function MyImpactScreen() {
           <Text style={{ color: "#2563eb", fontWeight: "600" }}>← Back</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate("ExportImpact" as never)}
+          onPress={() => navigation.navigate("ImpactGoals" as never)}
           style={{
-            backgroundColor: "#10b981",
-            paddingHorizontal: 12,
+            backgroundColor: "#f59e0b",
+            paddingHorizontal: 10,
             paddingVertical: 6,
             borderRadius: 6,
           }}
         >
-          <Text style={{ color: "#fff", fontWeight: "600", fontSize: 12 }}>
+          <Text style={{ color: "#fff", fontWeight: "600", fontSize: 11 }}>
+            🎯 Goals
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("AnalyticsDashboard" as never)}
+          style={{
+            backgroundColor: "#8b5cf6",
+            paddingHorizontal: 10,
+            paddingVertical: 6,
+            borderRadius: 6,
+          }}
+        >
+          <Text style={{ color: "#fff", fontWeight: "600", fontSize: 11 }}>
+            📊 Analytics
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("ExportImpact" as never)}
+          style={{
+            backgroundColor: "#10b981",
+            paddingHorizontal: 10,
+            paddingVertical: 6,
+            borderRadius: 6,
+          }}
+        >
+          <Text style={{ color: "#fff", fontWeight: "600", fontSize: 11 }}>
             📥 Export
           </Text>
         </TouchableOpacity>
