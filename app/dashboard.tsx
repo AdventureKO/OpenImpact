@@ -121,8 +121,14 @@ export default function Dashboard() {
             <Text style={{ color: "#fff", fontWeight: "600" }}>Track</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate("Projects")}
+            onPress={() => navigation.navigate("DonationHistory")}
             style={[styles.action, { backgroundColor: "#16a085" }]}
+          >
+            <Text style={{ color: "#fff", fontWeight: "600" }}>History</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Projects")}
+            style={[styles.action, { backgroundColor: "#27ae60" }]}
           >
             <Text style={{ color: "#fff", fontWeight: "600" }}>Browse</Text>
           </TouchableOpacity>
@@ -133,6 +139,16 @@ export default function Dashboard() {
             >
               <Text style={{ color: "#fff", fontWeight: "600" }}>
                 My impact
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+          {auth?.user?.role !== USER_ROLE.ORGANIZATION ? (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Achievements")}
+              style={[styles.action, { backgroundColor: "#f59e0b" }]}
+            >
+              <Text style={{ color: "#fff", fontWeight: "600" }}>
+                Achievements
               </Text>
             </TouchableOpacity>
           ) : null}

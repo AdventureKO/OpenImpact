@@ -13,6 +13,7 @@ import { ActivityIndicator, Text, View } from "react-native";
 import FundraiserDetail from "../components/FundraiserDetail";
 import { AuthContext } from "../context/AuthContext";
 import * as storage from "../utils/storage";
+import Achievements from "./achievements";
 import Analytics from "./analytics";
 import AnalyticsDashboard from "./analytics-dashboard";
 import Budget from "./budget";
@@ -21,6 +22,7 @@ import Collections from "./collections";
 import Dashboard from "./dashboard";
 import Donate from "./donate";
 import DonateConfirm from "./donate/confirm";
+import DonationHistory from "./donation-history";
 import ExportImpact from "./export-impact";
 import ImpactGoals from "./impact-goals";
 import Milestones from "./milestones";
@@ -217,9 +219,11 @@ export default function RootLayout() {
       <Stack.Screen name="ExportImpact" component={ExportImpact} />
       <Stack.Screen name="ImpactGoals" component={ImpactGoals} />
       <Stack.Screen name="AnalyticsDashboard" component={AnalyticsDashboard} />
+      <Stack.Screen name="Achievements" component={Achievements} />
       <Stack.Screen name="MonthlyRecap" component={MonthlyRecap} />
       <Stack.Screen name="Collections" component={Collections} />
       <Stack.Screen name="CharityRatings" component={CharityRatings} />
+      <Stack.Screen name="DonationHistory" component={DonationHistory} />
       <Stack.Screen name="OrgCauseDetail" component={OrgCauseDetail} />
     </Stack.Navigator>
   );
