@@ -16,12 +16,15 @@ import * as storage from "../utils/storage";
 import Analytics from "./analytics";
 import AnalyticsDashboard from "./analytics-dashboard";
 import Budget from "./budget";
+import CharityRatings from "./charity-ratings";
+import Collections from "./collections";
 import Dashboard from "./dashboard";
 import Donate from "./donate";
 import DonateConfirm from "./donate/confirm";
 import ExportImpact from "./export-impact";
 import ImpactGoals from "./impact-goals";
 import Milestones from "./milestones";
+import MonthlyRecap from "./monthly-recap";
 import MyImpact from "./my-impact";
 import Notifications from "./notifications";
 import OrgCauseDetail from "./org-cause-detail";
@@ -214,6 +217,9 @@ export default function RootLayout() {
       <Stack.Screen name="ExportImpact" component={ExportImpact} />
       <Stack.Screen name="ImpactGoals" component={ImpactGoals} />
       <Stack.Screen name="AnalyticsDashboard" component={AnalyticsDashboard} />
+      <Stack.Screen name="MonthlyRecap" component={MonthlyRecap} />
+      <Stack.Screen name="Collections" component={Collections} />
+      <Stack.Screen name="CharityRatings" component={CharityRatings} />
       <Stack.Screen name="OrgCauseDetail" component={OrgCauseDetail} />
     </Stack.Navigator>
   );

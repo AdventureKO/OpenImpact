@@ -154,6 +154,32 @@ export default function Dashboard() {
               </Text>
             </TouchableOpacity>
           ) : null}
+          {auth?.user?.role !== USER_ROLE.ORGANIZATION ? (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("MonthlyRecap")}
+              style={[styles.action, { backgroundColor: "#06b6d4" }]}
+            >
+              <Text style={{ color: "#fff", fontWeight: "600" }}>Recap</Text>
+            </TouchableOpacity>
+          ) : null}
+          {auth?.user?.role !== USER_ROLE.ORGANIZATION ? (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Collections")}
+              style={[styles.action, { backgroundColor: "#ec4899" }]}
+            >
+              <Text style={{ color: "#fff", fontWeight: "600" }}>
+                Collections
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+          {auth?.user?.role !== USER_ROLE.ORGANIZATION ? (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("CharityRatings")}
+              style={[styles.action, { backgroundColor: "#f97316" }]}
+            >
+              <Text style={{ color: "#fff", fontWeight: "600" }}>Ratings</Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
         <View style={{ height: 10 }} />
         <TouchableOpacity
