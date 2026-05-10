@@ -13,7 +13,7 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
-    View
+    View,
 } from "react-native";
 
 export default function OrgFundsScreen() {
@@ -66,32 +66,37 @@ export default function OrgFundsScreen() {
           </Text>
         }
         renderItem={({ item }) => (
-          <View style={styles.row}>
-            <View style={{ flex: 1 }}>
-              <Text style={[styles.causeName, { color: text }]}>
-                {item.name}
-              </Text>
-              <Text style={styles.meta}>Cause id: {item.id}</Text>
-            </View>
-            <View style={{ alignItems: "flex-end" }}>
-              <Text style={styles.amount}>${item.raised.toFixed(2)}</Text>
-              <TouchableOpacity
-                style={{
-                  marginTop: 8,
-                  backgroundColor: "#0ea5a4",
-                  paddingVertical: 6,
-                  paddingHorizontal: 10,
-                  borderRadius: 8,
-                }}
-                onPress={() => {
-                  router.push({
-                    pathname: "/org-allocations",
-                    params: { projectId: item.id },
-                  });
-                }}
-              >
-                <Text style={{ color: "#fff", fontWeight: "700" }}>Manage</Text>
-              </TouchableOpacity>
+          <View>
+            <TransparencyBadge projectId={item.id} />
+            <View style={styles.row}>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.causeName, { color: text }]}>
+                  {item.name}
+                </Text>
+                <Text style={styles.meta}>Cause id: {item.id}</Text>
+              </View>
+              <View style={{ alignItems: "flex-end" }}>
+                <Text style={styles.amount}>${item.raised.toFixed(2)}</Text>
+                <TouchableOpacity
+                  style={{
+                    marginTop: 8,
+                    backgroundColor: "#0ea5a4",
+                    paddingVertical: 6,
+                    paddingHorizontal: 10,
+                    borderRadius: 8,
+                  }}
+                  onPress={() => {
+                    router.push({
+                      pathname: "/org-allocations",
+                      params: { projectId: item.id },
+                    });
+                  }}
+                >
+                  <Text style={{ color: "#fff", fontWeight: "700" }}>
+                    Manage
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         )}

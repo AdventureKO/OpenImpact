@@ -1,6 +1,7 @@
 # OpenImpact: Strategic Analysis & 2-Week Demo Roadmap
 
 ## Core Mission
+
 **Increase transparency for donors, reduce charity fraud with modern simple UI that tracks where money goes.**
 
 ---
@@ -8,31 +9,37 @@
 ## What Makes OpenImpact Unique (Differentiators)
 
 ### 1. **Per-Donation Allocation Tracking** ⭐ Core Differentiator
+
 - **What**: Each donor sees a colorful breakdown bar on their donation showing exact allocation of their $ (Materials, Staff, Travel, Operations, Infrastructure).
-- **Why unique**: Most charity apps show aggregate breakdowns. This shows *per-donation* granularity.
+- **Why unique**: Most charity apps show aggregate breakdowns. This shows _per-donation_ granularity.
 - **Demo strength**: Visual, immediate, builds trust.
 
 ### 2. **Cryptographic Proofs for Auditability** 🔐 Trust Builder
+
 - **What**: Each dollar-allocation assignment has a SHA-256 proof hash.
 - **Why unique**: Provides tamper-evidence without blockchain complexity.
 - **Demo strength**: Shows "not just software, but verifiable."
 
 ### 3. **Real-Time Transparency Feed with Allocation Tags** 📝 Information Flow
+
 - **What**: Org posts updates tagged (Program, Staff, Operations, Infrastructure) that sync to donation allocations.
-- **Why unique**: Donors see *actual org updates* tied to their money's journey, not just tallies.
+- **Why unique**: Donors see _actual org updates_ tied to their money's journey, not just tallies.
 - **Demo strength**: Demonstrates live org→donor communication.
 
 ### 4. **Donor Impact View (My Impact)** 👁️ Engagement
+
 - **What**: "Since you gave $100 on date X, this cause has posted 5 updates in the Materials allocation you funded."
-- **Why unique**: Personal accountability loop—donor sees their donation's *story*.
+- **Why unique**: Personal accountability loop—donor sees their donation's _story_.
 - **Demo strength**: Emotional resonance + education.
 
 ### 5. **Org-to-Backend Sync Mock** 🔄 Production-Readiness
+
 - **What**: "Sync to server" button simulates backend reconciliation.
 - **Why unique**: Demonstrates scalability path without requiring real backend for demo.
 - **Demo strength**: Shows thought on infrastructure & data integrity.
 
 ### 6. **CSV/JSON Export + Proof Verification** 📊 Auditability
+
 - **What**: Export all assignments with proofs; reviewers can verify independently.
 - **Why unique**: Builds reviewer confidence; not a black box.
 - **Demo strength**: "Transparency" literally means inspect-able.
@@ -41,20 +48,20 @@
 
 ## Feature Inventory: What's Working, What Needs Work
 
-| Feature | Status | Demo Priority | Notes |
-|---------|--------|----------------|-------|
-| **Core: Allocation bars on donations** | ✅ Complete | 🔴 CRITICAL | Users can see colored segments; tap for proof hash. |
-| **Core: Org allocations management** | ✅ Complete | 🔴 CRITICAL | Create, release, sync, export. Demo runner included. |
-| **Core: Transparency feed** | ✅ Complete | 🔴 CRITICAL | Org posts with allocation tags shown to donors. |
-| **Core: My Impact (donor view)** | ✅ Complete | 🔴 CRITICAL | Shows updates since donation. |
-| **Proofs (SHA-256)** | ✅ Complete | 🟡 HIGH | Attached to assignments; export shows them. |
-| **CSV/JSON export** | ✅ Complete | 🟡 HIGH | In-app modal + console logs. |
-| **Integrity Stars** | ⚠️ Partial | 🟡 HIGH | UI exists, but unclear if values propagate; may confuse demo. |
-| **Milestones screen** | ⚠️ Works (fixed TS) | 🟢 LOW | Not in core demo script; distracts from transparency story. |
-| **Donations list** | ✅ Complete | 🔴 CRITICAL | Shows allocation bars. |
-| **Budget/Analytics** | ⚠️ Partial | 🟢 LOW | May not be demo-ready; consider hiding. |
-| **Browse causes** | ✅ Complete | 🟡 HIGH | Entry point for transparency feed. |
-| **Org Funds** | ✅ Complete | 🔴 CRITICAL | Shows incoming donations per cause. |
+| Feature                                | Status              | Demo Priority | Notes                                                         |
+| -------------------------------------- | ------------------- | ------------- | ------------------------------------------------------------- |
+| **Core: Allocation bars on donations** | ✅ Complete         | 🔴 CRITICAL   | Users can see colored segments; tap for proof hash.           |
+| **Core: Org allocations management**   | ✅ Complete         | 🔴 CRITICAL   | Create, release, sync, export. Demo runner included.          |
+| **Core: Transparency feed**            | ✅ Complete         | 🔴 CRITICAL   | Org posts with allocation tags shown to donors.               |
+| **Core: My Impact (donor view)**       | ✅ Complete         | 🔴 CRITICAL   | Shows updates since donation.                                 |
+| **Proofs (SHA-256)**                   | ✅ Complete         | 🟡 HIGH       | Attached to assignments; export shows them.                   |
+| **CSV/JSON export**                    | ✅ Complete         | 🟡 HIGH       | In-app modal + console logs.                                  |
+| **Integrity Stars**                    | ⚠️ Partial          | 🟡 HIGH       | UI exists, but unclear if values propagate; may confuse demo. |
+| **Milestones screen**                  | ⚠️ Works (fixed TS) | 🟢 LOW        | Not in core demo script; distracts from transparency story.   |
+| **Donations list**                     | ✅ Complete         | 🔴 CRITICAL   | Shows allocation bars.                                        |
+| **Budget/Analytics**                   | ⚠️ Partial          | 🟢 LOW        | May not be demo-ready; consider hiding.                       |
+| **Browse causes**                      | ✅ Complete         | 🟡 HIGH       | Entry point for transparency feed.                            |
+| **Org Funds**                          | ✅ Complete         | 🔴 CRITICAL   | Shows incoming donations per cause.                           |
 
 ---
 
@@ -81,22 +88,25 @@
 ## Recommended Demo Script (3-minute version)
 
 ### **Act 1: Donor Transparency** (1 min)
+
 1. **Home screen** → tap **Browse causes** → select **Clean Water for Village A** (`prj-1`).
 2. Scroll down to **Transparency feed** → show 3–4 posts tagged "Program," "Operations," etc.
-3. Explain: *"Org tells us exactly what they're doing with our money."*
+3. Explain: _"Org tells us exactly what they're doing with our money."_
 
 ### **Act 2: Donation & Tracking** (1 min)
+
 4. Tap **Donate** → donate $50 to Clean Water.
 5. Complete mock payment → view receipt.
 6. Go to **My Donations** → show the donation with **colored allocation bar**.
 7. Tap a segment → see proof hash + allocation name.
-8. Explain: *"We see where our $50 goes—specific line items, cryptographic proof."*
+8. Explain: _"We see where our $50 goes—specific line items, cryptographic proof."_
 
 ### **Act 3: Org Accountability** (1 min)
+
 9. **Switch to Org user** → **Org Funds** → tap **Manage** on Clean Water cause.
 10. Tap **Run demo simulation** → seeds 5 donations + releases "Materials" allocation for $10,000.
 11. Tap **Export assignments (CSV)** → show data in modal.
-12. Explain: *"Org releases spending plans; we assign donations to them. Exportable, auditable."*
+12. Explain: _"Org releases spending plans; we assign donations to them. Exportable, auditable."_
 
 ---
 
@@ -124,15 +134,15 @@
 
 ## Talking Points for Reviewers (2-week presentation)
 
-1. **"Granular Allocation Transparency"** — *Most charity apps show 70% program / 30% admin. We show **per-donation** allocations. Your $100 → $60 materials, $30 staff, $10 logistics.*
+1. **"Granular Allocation Transparency"** — _Most charity apps show 70% program / 30% admin. We show **per-donation** allocations. Your $100 → $60 materials, $30 staff, $10 logistics._
 
-2. **"Cryptographic Audit Trail"** — *Every assignment has a SHA-256 proof. Export, inspect, verify. No black box.*
+2. **"Cryptographic Audit Trail"** — _Every assignment has a SHA-256 proof. Export, inspect, verify. No black box._
 
-3. **"Real-Time Org Updates"** — *Donors see org posts tied to allocation tags. No delay between donation & accountability.*
+3. **"Real-Time Org Updates"** — _Donors see org posts tied to allocation tags. No delay between donation & accountability._
 
-4. **"Simple, Modern UX"** — *Colored bar charts > PDF financial statements. Accessibility for non-accountants.*
+4. **"Simple, Modern UX"** — _Colored bar charts > PDF financial statements. Accessibility for non-accountants._
 
-5. **"Scalable Architecture"** — *Demo runs on device; "Sync to server" button shows production path without requiring backend for demo.*
+5. **"Scalable Architecture"** — _Demo runs on device; "Sync to server" button shows production path without requiring backend for demo._
 
 ---
 

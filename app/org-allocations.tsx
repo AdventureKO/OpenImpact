@@ -316,38 +316,43 @@ export default function OrgAllocationsScreen() {
   );
 }
 
-<View style={{ flexDirection: "row", marginBottom: 8 }}>
-  <TouchableOpacity
-    style={[styles.smallBtn, { backgroundColor: "#2563eb", marginRight: 8 }]}
-    onPress={async () => {
-      try {
-        const csv = await allocations.exportAssignmentsAsCSV();
-        console.log("Assignments CSV:\n", csv);
-        Alert.alert("Exported", "Assignments CSV printed to console.");
-      } catch (e) {
-        console.warn(e);
-        Alert.alert("Error", "Export failed");
-      }
-    }}
-  >
-    <Text style={{ color: "#fff" }}>Export assignments (CSV)</Text>
-  </TouchableOpacity>
-  <TouchableOpacity
-    style={[styles.smallBtn, { backgroundColor: "#7c3aed" }]}
-    onPress={async () => {
-      try {
-        const json = await allocations.exportAllAsJSON();
-        console.log("Allocations+Assignments JSON:\n", json);
-        Alert.alert("Exported", "Allocations JSON printed to console.");
-      } catch (e) {
-        console.warn(e);
-        Alert.alert("Error", "Export failed");
-      }
-    }}
-  >
-    <Text style={{ color: "#fff" }}>Export JSON</Text>
-  </TouchableOpacity>
-</View>;
+const styles = StyleSheet.create({
+  wrap: { flex: 1, padding: 16, paddingTop: 20 },
+  title: { fontSize: 22, fontWeight: "800", marginBottom: 6 },
+  sub: { opacity: 0.85, marginBottom: 14, fontSize: 13 },
+  input: {
+    backgroundColor: "#fff",
+    padding: 10,
+    borderRadius: 8,
+    marginRight: 8,
+    flex: 1,
+  },
+  primaryBtn: {
+    backgroundColor: "#059669",
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    justifyContent: "center",
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    marginBottom: 8,
+    elevation: 1,
+  },
+  causeName: { fontWeight: "700", fontSize: 16 },
+  meta: { fontSize: 12, color: "#888", marginTop: 4 },
+  smallBtn: {
+    backgroundColor: "#0ea5a4",
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+  },
+});
 const styles = StyleSheet.create({
   wrap: { flex: 1, padding: 16, paddingTop: 20 },
   title: { fontSize: 22, fontWeight: "800", marginBottom: 6 },
