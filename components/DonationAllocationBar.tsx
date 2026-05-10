@@ -15,7 +15,14 @@ export default function DonationAllocationBar({ donation }) {
   useEffect(() => {
     (async () => {
       if (!donation) return;
+      console.log("DonationAllocationBar: loading for donation", donation.id);
       const a = await allocations.assignmentsForDonation(donation.id);
+      console.log(
+        "DonationAllocationBar: found",
+        a?.length || 0,
+        "assignments for",
+        donation.id,
+      );
       setParts(a || []);
     })();
   }, [donation && donation.id]);

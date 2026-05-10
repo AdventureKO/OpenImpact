@@ -65,23 +65,45 @@ export async function seedDemoDonations() {
       (a) => a.projectId === "p1" && a.title === "Materials & Supplies",
     );
 
+    console.log(
+      "seedDemoDonations: synced",
+      anonDonations.length,
+      "donations to incomingDonations",
+    );
+    console.log(
+      "seedDemoDonations: p1Alloc found?",
+      !!p1Alloc,
+      "releasedAt?",
+      p1Alloc?.releasedAt,
+    );
+
     if (!p1Alloc) {
-      const allocId = await allocations.createAllocationForUser(
+      const alloc = await allocations.createAllocationForUser(
         null,
         "p1",
         "Materials & Supplies",
         10000,
       );
-      if (allocId) {
+      console.log("seedDemoDonations: created allocation", alloc?.id);
+      if (alloc && alloc.id) {
         // Release allocation so it assigns donations
-        await allocations.releaseAllocation(null, allocId);
+        await allocations.releaseAllocation(null, alloc.id);
+        console.log("seedDemoDonations: released allocation", alloc.id);
       }
     } else if (!p1Alloc.releasedAt) {
       // If allocation exists but isn't released, release it now
       await allocations.releaseAllocation(null, p1Alloc.id);
+      console.log(
+        "seedDemoDonations: released existing allocation",
+        p1Alloc.id,
+      );
     }
 
-    console.log("seedDemoDonations: ensured allocations exist");
+    const finalAssignments = await allocations.loadAssignments();
+    console.log(
+      "seedDemoDonations: done, assignments count =",
+      finalAssignments.length,
+    );
     return true;
   } catch (e) {
     console.warn("seedDemoDonations failed:", e);
