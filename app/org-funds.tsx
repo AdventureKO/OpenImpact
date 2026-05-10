@@ -1,23 +1,26 @@
+import TransparencyBadge from "@/components/TransparencyBadge";
 import { AuthContext } from "@/context/AuthContext";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import {
-    loadIncomingDonations,
-    sumIncomingForCause,
+  loadIncomingDonations,
+  sumIncomingForCause,
 } from "@/utils/fundTracking";
 import * as storage from "@/utils/storage";
 import { useFocusEffect } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 import React, { useCallback, useContext, useState } from "react";
 import {
-    FlatList,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export default function OrgFundsScreen() {
   const auth = useContext(AuthContext);
+  const router = useRouter();
   const bg = useThemeColor({}, "background");
   const text = useThemeColor({}, "text");
   const [rows, setRows] = useState<
@@ -25,9 +28,19 @@ export default function OrgFundsScreen() {
   >([]);
 
   const load = useCallback(async () => {
-    const causes =
-      (await storage.loadForUser(auth?.user ?? null, "myFundraisers", [])) ||
-      [];
+    let causes: any[] =
+      ((await storage.loadForUser(auth?.user, "myFundraisers")) as any) || [];
+
+    // Seed demo causes if none exist
+    if (causes.length === 0) {
+      const demoCauses = [
+        { id: "p1", name: "Clean Water Initiative" },
+        { id: "p2", name: "Education Program" },
+      ];
+      await storage.saveForUser(auth?.user, "myFundraisers", demoCauses);
+      causes = demoCauses;
+    }
+
     const incoming = await loadIncomingDonations();
     setRows(
       causes.map((c: { id: string; name?: string }) => ({

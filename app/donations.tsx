@@ -11,6 +11,7 @@ import {
 import DonationAllocationBar from "../components/DonationAllocationBar";
 import { AuthContext } from "../context/AuthContext";
 import { useThemeColor } from "../hooks/use-theme-color";
+import { seedDemoDonations } from "../utils/seedDemoDonations";
 import * as storage from "../utils/storage";
 
 export default function DonationsScreen() {
@@ -27,7 +28,11 @@ export default function DonationsScreen() {
             (await storage.loadForUser(auth.user, "donations", [])) || [];
           setDonations(d);
         } else {
-          const d = (await storage.load("anonDonations", [])) || [];
+          let d = (await storage.load("anonDonations", [])) || [];
+          if (d.length === 0) {
+            await seedDemoDonations();
+            d = (await storage.load("anonDonations", [])) || [];
+          }
           setDonations(d);
         }
       } catch (e) {
