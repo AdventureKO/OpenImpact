@@ -126,65 +126,17 @@ export default function MyImpactScreen() {
 
   return (
     <SafeAreaView style={[styles.wrap, { backgroundColor: bg }]}>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 12,
-          gap: 8,
-        }}
-      >
+      <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.back}
         >
           <Text style={{ color: "#2563eb", fontWeight: "600" }}>← Back</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("ImpactGoals" as never)}
-          style={{
-            backgroundColor: "#f59e0b",
-            paddingHorizontal: 10,
-            paddingVertical: 6,
-            borderRadius: 6,
-          }}
-        >
-          <Text style={{ color: "#fff", fontWeight: "600", fontSize: 11 }}>
-            🎯 Goals
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("AnalyticsDashboard" as never)}
-          style={{
-            backgroundColor: "#8b5cf6",
-            paddingHorizontal: 10,
-            paddingVertical: 6,
-            borderRadius: 6,
-          }}
-        >
-          <Text style={{ color: "#fff", fontWeight: "600", fontSize: 11 }}>
-            📊 Analytics
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("ExportImpact" as never)}
-          style={{
-            backgroundColor: "#10b981",
-            paddingHorizontal: 10,
-            paddingVertical: 6,
-            borderRadius: 6,
-          }}
-        >
-          <Text style={{ color: "#fff", fontWeight: "600", fontSize: 11 }}>
-            📥 Export
-          </Text>
-        </TouchableOpacity>
       </View>
-      <Text style={[styles.title, { color: text }]}>My impact</Text>
+      <Text style={[styles.title, { color: text }]}>My Impact</Text>
       <Text style={[styles.sub, { color: secondary }]}>
-        See official transparency posts from each cause after your gift—the
-        trail from dollars to proof.
+        See how your donations create measurable impact—from gift to verified outcome.
       </Text>
 
       {!auth?.user ? (
@@ -344,12 +296,7 @@ export default function MyImpactScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: { flex: 1, padding: 16, paddingTop: 12 },
-  back: { marginBottom: 8 },
-  title: { fontSize: 24, fontWeight: "800", marginBottom: 8 },
-  sub: { fontSize: 14, lineHeight: 20, marginBottom: 16 },
-  card: {
+const styles = StyleSheet.create({\n  wrap: { flex: 1, padding: 16, paddingTop: 12 },\n  header: { marginBottom: 12 },\n  back: { marginBottom: 8 },\n  title: { fontSize: 24, fontWeight: \"800\", marginBottom: 8 },\n  sub: { fontSize: 14, lineHeight: 20, marginBottom: 16 },\n  card: {
     backgroundColor: "#fff",
     padding: 14,
     borderRadius: 12,

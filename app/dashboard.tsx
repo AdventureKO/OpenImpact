@@ -2,8 +2,8 @@ import { USER_ROLE } from "@/constants/userRoles";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import React, { useCallback, useContext, useState } from "react";
 import {
-    FlatList,
     SafeAreaView,
+    ScrollView,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -50,300 +50,254 @@ export default function Dashboard() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: bg }}>
-      <View style={{ padding: 16, paddingTop: 20 }}>
-        <Text
-          style={{
-            fontSize: 22,
-            fontWeight: "800",
-            marginBottom: 4,
-            color: text,
-          }}
-        >
-          OpenImpact
-        </Text>
-        <Text
-          style={{
-            fontSize: 14,
-            fontWeight: "600",
-            marginBottom: 6,
-            color: text,
-            opacity: 0.85,
-          }}
-        >
-          Donors see where dollars went; organizations prove it with updates
-          tied to each stage.
-        </Text>
-        <Text
-          style={{
-            fontSize: 18,
-            fontWeight: "700",
-            marginBottom: 6,
-            color: text,
-          }}
-        >
-          Hello
-          {auth && auth.user ? `, ${auth.user.name || auth.user.email}` : ""}
-        </Text>
-        <View style={{ height: 12 }} />
-        <View style={styles.row}>
-          <View style={styles.card}>
-            <Text style={styles.cardLabel}>Total Donated</Text>
-            <Text style={styles.cardValue}>${totalDonated}</Text>
-          </View>
-          <View style={styles.card}>
-            <Text style={styles.cardLabel}>Active Donations</Text>
-            <Text style={styles.cardValue}>{activeCount}</Text>
-          </View>
-        </View>
+      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
+        <View style={{ padding: 16, paddingTop: 20 }}>
+          <Text
+            style={{
+              fontSize: 22,
+              fontWeight: "800",
+              marginBottom: 4,
+              color: text,
+            }}
+          >
+            OpenImpact
+          </Text>
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: "700",
+              marginBottom: 12,
+              color: text,
+            }}
+          >
+            Hello {auth && auth.user ? auth.user.name || auth.user.email : ""}
+          </Text>
 
-        <View style={{ height: 12 }} />
-        <Text style={{ fontWeight: "700", marginBottom: 8, color: text }}>
-          Quick actions
-        </Text>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: 8,
-          }}
-        >
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Donate")}
-            style={styles.action}
-          >
-            <Text style={{ color: "#fff", fontWeight: "600" }}>Donate</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Track")}
-            style={[styles.action, { backgroundColor: "#3498db" }]}
-          >
-            <Text style={{ color: "#fff", fontWeight: "600" }}>Track</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("DonationHistory")}
-            style={[styles.action, { backgroundColor: "#16a085" }]}
-          >
-            <Text style={{ color: "#fff", fontWeight: "600" }}>History</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Projects")}
-            style={[styles.action, { backgroundColor: "#27ae60" }]}
-          >
-            <Text style={{ color: "#fff", fontWeight: "600" }}>Browse</Text>
-          </TouchableOpacity>
-          {auth?.user?.role !== USER_ROLE.ORGANIZATION ? (
+          {/* Quick Stats */}
+          <View style={styles.row}>
+            <View style={styles.card}>
+              <Text style={styles.cardLabel}>Total Donated</Text>
+              <Text style={styles.cardValue}>${totalDonated}</Text>
+            </View>
+            <View style={styles.card}>
+              <Text style={styles.cardLabel}>Active</Text>
+              <Text style={styles.cardValue}>{activeCount}</Text>
+            </View>
+          </View>
+
+          <View style={{ height: 16 }} />
+          <Text style={{ fontWeight: "700", marginBottom: 10, color: text }}>
+            Primary Actions
+          </Text>
+          <View style={styles.primaryButtons}>
             <TouchableOpacity
-              onPress={() => navigation.navigate("MyImpact")}
-              style={[styles.action, { backgroundColor: "#7c3aed" }]}
+              onPress={() => navigation.navigate("Donate")}
+              style={[styles.actionLarge, { backgroundColor: "#27ae60" }]}
             >
-              <Text style={{ color: "#fff", fontWeight: "600" }}>
-                My impact
+              <Text style={{ color: "#fff", fontWeight: "600", fontSize: 13 }}>
+                💚 Donate
               </Text>
             </TouchableOpacity>
-          ) : null}
-          {auth?.user?.role !== USER_ROLE.ORGANIZATION ? (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("MyImpact")}
+              style={[styles.actionLarge, { backgroundColor: "#7c3aed" }]}
+            >
+              <Text style={{ color: "#fff", fontWeight: "600", fontSize: 13 }}>
+                👁️ My Impact
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Projects")}
+              style={[styles.actionLarge, { backgroundColor: "#3498db" }]}
+            >
+              <Text style={{ color: "#fff", fontWeight: "600", fontSize: 13 }}>
+                🔍 Browse
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={{ height: 12 }} />
+          <Text style={{ fontWeight: "700", marginBottom: 10, color: text }}>
+            More Tools
+          </Text>
+          <View style={styles.secondaryButtons}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("DonationHistory")}
+              style={styles.actionSmall}
+            >
+              <Text style={styles.buttonText}>📜 History</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Track")}
+              style={styles.actionSmall}
+            >
+              <Text style={styles.buttonText}>📍 Track</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               onPress={() => navigation.navigate("Achievements")}
-              style={[styles.action, { backgroundColor: "#f59e0b" }]}
+              style={styles.actionSmall}
             >
-              <Text style={{ color: "#fff", fontWeight: "600" }}>
-                Achievements
-              </Text>
+              <Text style={styles.buttonText}>🏆 Badges</Text>
             </TouchableOpacity>
-          ) : null}
-          {auth?.user?.role !== USER_ROLE.ORGANIZATION ? (
-            <TouchableOpacity
-              onPress={() => navigation.navigate("ImpactGoals")}
-              style={[styles.action, { backgroundColor: "#f59e0b" }]}
-            >
-              <Text style={{ color: "#fff", fontWeight: "600" }}>Goals</Text>
-            </TouchableOpacity>
-          ) : null}
-          {auth?.user?.role !== USER_ROLE.ORGANIZATION ? (
             <TouchableOpacity
               onPress={() => navigation.navigate("AnalyticsDashboard")}
-              style={[styles.action, { backgroundColor: "#8b5cf6" }]}
+              style={styles.actionSmall}
             >
-              <Text style={{ color: "#fff", fontWeight: "600" }}>
-                Analytics
-              </Text>
+              <Text style={styles.buttonText}>📊 Analytics</Text>
             </TouchableOpacity>
-          ) : null}
-          {auth?.user?.role !== USER_ROLE.ORGANIZATION ? (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("ImpactGoals")}
+              style={styles.actionSmall}
+            >
+              <Text style={styles.buttonText}>🎯 Goals</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               onPress={() => navigation.navigate("MonthlyRecap")}
-              style={[styles.action, { backgroundColor: "#06b6d4" }]}
+              style={styles.actionSmall}
             >
-              <Text style={{ color: "#fff", fontWeight: "600" }}>Recap</Text>
+              <Text style={styles.buttonText}>📈 Recap</Text>
             </TouchableOpacity>
-          ) : null}
-          {auth?.user?.role !== USER_ROLE.ORGANIZATION ? (
             <TouchableOpacity
               onPress={() => navigation.navigate("Collections")}
-              style={[styles.action, { backgroundColor: "#ec4899" }]}
+              style={styles.actionSmall}
             >
-              <Text style={{ color: "#fff", fontWeight: "600" }}>
-                Collections
-              </Text>
+              <Text style={styles.buttonText}>📚 Collections</Text>
             </TouchableOpacity>
-          ) : null}
-          {auth?.user?.role !== USER_ROLE.ORGANIZATION ? (
             <TouchableOpacity
               onPress={() => navigation.navigate("CharityRatings")}
-              style={[styles.action, { backgroundColor: "#f97316" }]}
+              style={styles.actionSmall}
             >
-              <Text style={{ color: "#fff", fontWeight: "600" }}>Ratings</Text>
-            </TouchableOpacity>
-          ) : null}
-        </View>
-        <View style={{ height: 10 }} />
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Notifications")}
-          style={{
-            alignSelf: "flex-start",
-            paddingVertical: 8,
-            paddingHorizontal: 12,
-          }}
-        >
-          <Text style={{ color: text, fontWeight: "600", fontSize: 14 }}>
-            Notifications →
-          </Text>
-        </TouchableOpacity>
-
-        <View style={{ height: 16 }} />
-
-        {/* Demo Features Banner */}
-        {auth?.user?.role !== USER_ROLE.ORGANIZATION && totalDonated > 0 && (
-          <View style={styles.demoBanner}>
-            <Text
-              style={{
-                fontSize: 14,
-                fontWeight: "700",
-                color: "#1f2937",
-                marginBottom: 10,
-              }}
-            >
-              ✨ Unique Transparency Features
-            </Text>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("MyImpact")}
-              style={styles.demoBannerButton}
-            >
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontWeight: "600",
-                  color: "#0369a1",
-                  marginBottom: 2,
-                }}
-              >
-                👁️ My Impact Tracker
-              </Text>
-              <Text style={{ fontSize: 11, color: "#0c4a6e" }}>
-                See your donations matched to org updates by allocation type
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("ExportImpact")}
-              style={styles.demoBannerButton}
-            >
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontWeight: "600",
-                  color: "#059669",
-                  marginBottom: 2,
-                }}
-              >
-                📥 Export Your Trail
-              </Text>
-              <Text style={{ fontSize: 11, color: "#065f46" }}>
-                Download JSON/CSV for independent audit or tax records
-              </Text>
+              <Text style={styles.buttonText}>⭐ Ratings</Text>
             </TouchableOpacity>
           </View>
-        )}
 
-        <View style={{ height: 16 }} />
-        <Text style={{ fontWeight: "700", marginBottom: 8, color: text }}>
-          Recent updates
-        </Text>
-        {recent.length === 0 ? (
-          <Text style={{ color: text }}>No recent updates</Text>
-        ) : (
-          <FlatList
-            data={recent}
-            keyExtractor={(i) => i.id}
-            renderItem={({ item }) => (
-              <View
-                style={{
-                  padding: 8,
-                  borderBottomWidth: 1,
-                  borderColor: "#eee",
-                }}
+          {auth?.user?.role !== USER_ROLE.ORGANIZATION && (
+            <>
+              <View style={{ height: 12 }} />
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Notifications")}
+                style={styles.notificationLink}
               >
-                <Text style={{ fontWeight: "700", color: text }}>
-                  {item.projectId || "Project"}
+                <Text
+                  style={{ color: "#2563eb", fontWeight: "600", fontSize: 12 }}
+                >
+                  🔔 Notifications
                 </Text>
-                <Text style={{ color: text }}>
-                  ${item.amount} — {new Date(item.createdAt).toLocaleString()}
-                </Text>
-              </View>
-            )}
-          />
-        )}
+              </TouchableOpacity>
+            </>
+          )}
 
-        <View style={{ height: 16 }} />
-        <Text style={{ fontWeight: "700", marginBottom: 8, color: text }}>
-          Impact summary
-        </Text>
-        <View style={{ padding: 8 }}>
-          <Text style={{ color: text }}>Meals provided: {impact.meals}</Text>
-          <Text style={{ color: text }}>
-            Trees planted (est): {impact.trees}
-          </Text>
+          {/* Impact Summary */}
+          {totalDonated > 0 && (
+            <>
+              <View style={{ height: 16 }} />
+              <View style={styles.summaryCard}>
+                <Text
+                  style={{ fontWeight: "700", marginBottom: 8, color: text }}
+                >
+                  Impact Summary
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-around",
+                  }}
+                >
+                  <View style={{ alignItems: "center" }}>
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        fontWeight: "800",
+                        color: "#f59e0b",
+                      }}
+                    >
+                      {impact.meals}
+                    </Text>
+                    <Text style={{ fontSize: 11, color: "#666" }}>Meals</Text>
+                  </View>
+                  <View style={{ alignItems: "center" }}>
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        fontWeight: "800",
+                        color: "#10b981",
+                      }}
+                    >
+                      {impact.trees}
+                    </Text>
+                    <Text style={{ fontSize: 11, color: "#666" }}>Trees</Text>
+                  </View>
+                </View>
+              </View>
+            </>
+          )}
+
+          <View style={{ height: 20 }} />
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: "row", justifyContent: "space-between" },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 12,
+  },
   card: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#f9fafb",
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 10,
     marginRight: 8,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+  },
+  cardLabel: {
+    fontSize: 11,
+    color: "#666",
+    fontWeight: "600",
+    marginBottom: 4,
+  },
+  cardValue: { fontSize: 18, fontWeight: "800" },
+  primaryButtons: {
+    flexDirection: "row",
+    gap: 10,
+    marginBottom: 12,
+  },
+  actionLarge: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: "center",
     elevation: 2,
   },
-  cardLabel: { fontSize: 12, color: "#666" },
-  cardValue: { fontSize: 18, fontWeight: "700" },
-  action: {
-    backgroundColor: "#27ae60",
-    padding: 12,
+  secondaryButtons: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  actionSmall: {
+    width: "48%",
+    paddingVertical: 12,
     borderRadius: 8,
-    minWidth: "30%",
-    flexGrow: 1,
+    backgroundColor: "#f9fafb",
     alignItems: "center",
-    marginRight: 8,
+    borderWidth: 1,
+    borderColor: "#d1d5db",
   },
-  demoBanner: {
-    backgroundColor: "#f0f9ff",
-    borderWidth: 2,
-    borderColor: "#0369a1",
-    borderRadius: 12,
-    padding: 14,
-  },
-  demoBannerButton: {
-    backgroundColor: "#fff",
+  buttonText: { fontWeight: "600", fontSize: 12, color: "#1f2937" },
+  notificationLink: {
     paddingVertical: 10,
     paddingHorizontal: 12,
-    borderRadius: 8,
-    marginBottom: 8,
-    borderLeftWidth: 4,
-    borderLeftColor: "#0369a1",
+    alignItems: "center",
+  },
+  summaryCard: {
+    backgroundColor: "#f9fafb",
+    borderRadius: 10,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
   },
 });

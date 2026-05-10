@@ -25,6 +25,7 @@ import DonateConfirm from "./donate/confirm";
 import DonationHistory from "./donation-history";
 import ExportImpact from "./export-impact";
 import ImpactGoals from "./impact-goals";
+import Leaderboard from "./leaderboard";
 import Milestones from "./milestones";
 import MonthlyRecap from "./monthly-recap";
 import MyImpact from "./my-impact";
@@ -224,6 +225,7 @@ export default function RootLayout() {
       <Stack.Screen name="Collections" component={Collections} />
       <Stack.Screen name="CharityRatings" component={CharityRatings} />
       <Stack.Screen name="DonationHistory" component={DonationHistory} />
+      <Stack.Screen name="Leaderboard" component={Leaderboard} />
       <Stack.Screen name="OrgCauseDetail" component={OrgCauseDetail} />
     </Stack.Navigator>
   );
