@@ -13,7 +13,7 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    View
+    View,
 } from "react-native";
 import { AuthContext } from "../context/AuthContext";
 import { useThemeColor } from "../hooks/use-theme-color";
@@ -124,11 +124,12 @@ export default function ProfileScreen() {
             await remove("anonDonations");
             await remove("receipts");
             await remove("anonReceipts");
+            await remove("incomingDonations");
             setDonations([]);
             setReceipts([]);
             Alert.alert(
               "Reset",
-              "Local donations and receipts cleared (test only)",
+              "Local donations, receipts, and all tracking cleared (test only)",
             );
           },
         },
@@ -522,7 +523,7 @@ export default function ProfileScreen() {
                   minWidth: 120,
                   paddingVertical: 10,
                   paddingHorizontal: 12,
-                  backgroundColor: surface,
+                  backgroundColor: "#3b82f6",
                   borderRadius: 8,
                   borderWidth: 1,
                   borderColor: border,
@@ -531,7 +532,7 @@ export default function ProfileScreen() {
               >
                 <Text
                   style={{
-                    color: text,
+                    color: "#fff",
                     fontWeight: "700",
                     fontSize: 13,
                     textAlign: "center",
