@@ -23,16 +23,15 @@ export default function DonationsScreen() {
   useEffect(() => {
     (async () => {
       try {
+        // Always ensure demo allocations are set up
+        await seedDemoDonations();
+
         if (auth && auth.user) {
           const d =
             (await storage.loadForUser(auth.user, "donations", [])) || [];
           setDonations(d);
         } else {
-          let d = (await storage.load("anonDonations", [])) || [];
-          if (d.length === 0) {
-            await seedDemoDonations();
-            d = (await storage.load("anonDonations", [])) || [];
-          }
+          const d = (await storage.load("anonDonations", [])) || [];
           setDonations(d);
         }
       } catch (e) {

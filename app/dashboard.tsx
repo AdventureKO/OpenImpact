@@ -59,7 +59,7 @@ export default function Dashboard() {
             color: text,
           }}
         >
-          Charity with Confidence
+          OpenImpact
         </Text>
         <Text
           style={{
