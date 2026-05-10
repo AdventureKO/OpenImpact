@@ -5,12 +5,12 @@ import { useThemeColor } from '../hooks/use-theme-color';
 import { Fonts } from '../constants/theme';
 
 export default function RenderListItem({ item, isFavorite, deleteItem, addToFavorites, removeFromFavorites, handleEdit, onPress, deleteLabel = '✕', owned = false }) {
-  const bg = useThemeColor({}, 'background');
   const text = useThemeColor({}, 'text');
   const tint = useThemeColor({}, 'tint');
   const border = useThemeColor({}, 'icon');
   const primary = useThemeColor({}, 'primary');
   const surface = useThemeColor({}, 'surface');
+  const secondary = useThemeColor({}, 'secondary');
 
   return (
     <TouchableOpacity onPress={() => onPress && onPress(item)} style={[styles.container, { backgroundColor: surface, borderColor: border, ...(Platform.OS === 'android' ? { elevation: 3 } : {}), }]}>
@@ -22,7 +22,7 @@ export default function RenderListItem({ item, isFavorite, deleteItem, addToFavo
       <View style={{ marginLeft: 12, flex: 1 }}>
         <Text style={[styles.name, { color: text, fontFamily: Fonts.rounded || undefined }]} numberOfLines={1}>{item.name}</Text>
         {item.tags && (item.tags || []).length > 0 ? (
-          <Text style={{ color: useThemeColor({}, 'secondary'), fontSize: 12, marginTop: 4 }}>{(item.tags || []).slice(0,3).join(', ')}</Text>
+          <Text style={{ color: secondary, fontSize: 12, marginTop: 4 }}>{(item.tags || []).slice(0,3).join(', ')}</Text>
         ) : null}
       </View>
       <View style={styles.actions}>

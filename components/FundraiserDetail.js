@@ -7,8 +7,6 @@ import { AuthContext } from '../context/AuthContext';
 import * as storage from '../utils/storage';
 
 export default function FundraiserDetail({ project, onBack }) {
-  if (!project) return null;
-
   const bg = useThemeColor({}, 'background');
   const text = useThemeColor({}, 'text');
   const tint = useThemeColor({}, 'tint');
@@ -21,6 +19,7 @@ export default function FundraiserDetail({ project, onBack }) {
   const [reviewText, setReviewText] = useState('');
 
   useEffect(() => {
+    if (!project?.id) return;
     (async () => {
       try {
         const all = (await storage.load('reviews', [])) || [];
@@ -28,7 +27,9 @@ export default function FundraiserDetail({ project, onBack }) {
         setReviews(filtered);
       } catch (e) { console.warn('load reviews failed', e); }
     })();
-  }, [project && project.id]);
+  }, [project?.id]);
+
+  if (!project) return null;
 
   const saveReview = async () => {
     if (!reviewText.trim()) return Alert.alert('Validation', 'Please enter a review');

@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { SafeAreaView, View, Text, Button, FlatList, ActivityIndicator, Alert, TouchableOpacity, Share, Linking } from 'react-native';
+import React, { useEffect, useState, useContext } from 'react';
+import { SafeAreaView, View, Text, FlatList, ActivityIndicator, Alert, TouchableOpacity, Share, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import { load, remove } from '../utils/storage';
 import { useThemeColor } from '../hooks/use-theme-color';
+import { AuthContext } from '../context/AuthContext';
+import { USER_ROLE } from '@/constants/userRoles';
+import { resetDemoSeedData } from '@/utils/hydrateDemoTransparency';
 
 export default function ProfileScreen() {
   const bg = useThemeColor({}, 'background');
@@ -59,6 +63,8 @@ export default function ProfileScreen() {
   };
 
   const navigation = useNavigation();
+  const router = useRouter();
+  const auth = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState('donations');
 
   const resetAllLocalData = () => {
@@ -70,10 +76,56 @@ export default function ProfileScreen() {
     ]);
   };
 
+  const confirmResetDemoSeeds = () => {
+    Alert.alert(
+      'Reset demo seed data?',
+      'Removes bundled demo transparency posts, sample incoming donations for prj-1…3, and demo integrity scores—then restores them fresh. Your login and personal donations/receipts stay unless you clear those separately.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Reset demo',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await resetDemoSeedData();
+              Alert.alert('Done', 'Demo seeds refreshed. Organization Funds and demo feeds should match a clean install.');
+            } catch (e) {
+              Alert.alert('Reset failed', e instanceof Error ? e.message : String(e));
+            }
+          },
+        },
+      ]
+    );
+  };
+
   return (
     <SafeAreaView style={{flex:1, padding:16, paddingTop:18, backgroundColor: bg}}>
       <Text style={{fontSize:20, fontWeight:'700', marginBottom:8, color: text}}>Profile</Text>
       <Text style={{color:secondary, marginBottom:12}}>Manage personal info, payment methods, receipts, and notifications.</Text>
+
+      <View style={{ padding: 12, backgroundColor: surface, borderRadius: 10, marginBottom: 14, borderWidth: 1, borderColor: border }}>
+        {auth?.user ? (
+          <>
+            <Text style={{ color: text, fontWeight: '700' }}>{auth.user.name || auth.user.email}</Text>
+            <Text style={{ color: secondary, marginTop: 4 }}>
+              {auth.user.role === USER_ROLE.ORGANIZATION ? 'Organization account' : 'Contributor account'}
+            </Text>
+            <TouchableOpacity
+              onPress={async () => {
+                await auth.signOut();
+                router.replace('/login');
+              }}
+              style={{ marginTop: 10, backgroundColor: danger, padding: 10, borderRadius: 8, alignItems: 'center' }}
+            >
+              <Text style={{ color: '#fff', fontWeight: '700' }}>Sign out</Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <TouchableOpacity onPress={() => router.push('/login')} style={{ backgroundColor: primary, padding: 12, borderRadius: 8, alignItems: 'center' }}>
+            <Text style={{ color: '#fff', fontWeight: '700' }}>Sign in</Text>
+          </TouchableOpacity>
+        )}
+      </View>
 
       <View style={{flexDirection:'row', marginBottom:12, alignItems:'center', justifyContent:'space-between', flexWrap:'wrap'}}>
         <TouchableOpacity onPress={exportAll} style={{paddingVertical:10, paddingHorizontal:14, backgroundColor:'#fff', borderRadius:8, borderWidth:1, borderColor:'#ddd', marginBottom:8, flexBasis:'48%'}}>
@@ -83,6 +135,16 @@ export default function ProfileScreen() {
           <Text style={{color:'#fff', fontWeight:'700', textAlign:'center'}}>Clear Donations & Receipts</Text>
         </TouchableOpacity>
       </View>
+
+      <TouchableOpacity
+        onPress={confirmResetDemoSeeds}
+        style={{ paddingVertical: 12, paddingHorizontal: 14, backgroundColor: '#c2410c', borderRadius: 8, marginBottom: 14, alignItems: 'center' }}
+      >
+        <Text style={{ color: '#fff', fontWeight: '800', textAlign: 'center' }}>Reset demo seed data (rehearsal)</Text>
+        <Text style={{ color: '#ffedd5', fontSize: 11, marginTop: 4, textAlign: 'center' }}>
+          Restores bundled feeds, incoming totals & demo ratings — keeps your account
+        </Text>
+      </TouchableOpacity>
 
       <View style={{flexDirection:'row', marginBottom:6}}>
         <TouchableOpacity onPress={() => navigation.navigate('Budget')} style={{padding:8, backgroundColor:'#eee', borderRadius:6, marginRight:8}}>

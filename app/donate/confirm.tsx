@@ -4,6 +4,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { useThemeColor } from '../../hooks/use-theme-color';
 import { AuthContext } from '../../context/AuthContext';
 import * as storage from '../../utils/storage';
+import { appendIncomingDonation } from '../../utils/fundTracking';
 import { NotificationContext } from '../../context/NotificationContext';
 
 export default function ConfirmDonation() {
@@ -31,6 +32,8 @@ export default function ConfirmDonation() {
         amount: parseFloat(String(amount || '0')) || 0,
         note: note || '',
         createdAt: new Date().toISOString(),
+        journeyStep: 0,
+        allocationCategory: null,
         donor: auth && auth.user ? { id: auth.user.id || auth.user.email || 'user', name: auth.user.name || auth.user.email } : { id: 'anon', name }
       };
 
@@ -40,6 +43,15 @@ export default function ConfirmDonation() {
       } else {
         const anon = (await storage.load('anonDonations', [])) || [];
         await storage.save('anonDonations', [donation, ...anon]);
+      }
+
+      if (donation.projectId) {
+        await appendIncomingDonation({
+          projectId: donation.projectId,
+          amount: donation.amount,
+          donationId: donation.id,
+          createdAt: donation.createdAt,
+        });
       }
 
       const receipt = {

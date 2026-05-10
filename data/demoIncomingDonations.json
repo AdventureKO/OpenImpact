@@ -1,0 +1,40 @@
+{
+  "donations": [
+    {
+      "projectId": "prj-1",
+      "amount": 850,
+      "donationId": "demo-inc-prj1-a",
+      "hoursAgo": 52
+    },
+    {
+      "projectId": "prj-1",
+      "amount": 120,
+      "donationId": "demo-inc-prj1-b",
+      "hoursAgo": 9
+    },
+    {
+      "projectId": "prj-2",
+      "amount": 400,
+      "donationId": "demo-inc-prj2-a",
+      "hoursAgo": 30
+    },
+    {
+      "projectId": "prj-2",
+      "amount": 95,
+      "donationId": "demo-inc-prj2-b",
+      "hoursAgo": 6
+    },
+    {
+      "projectId": "prj-3",
+      "amount": 310,
+      "donationId": "demo-inc-prj3-a",
+      "hoursAgo": 66
+    },
+    {
+      "projectId": "prj-3",
+      "amount": 180,
+      "donationId": "demo-inc-prj3-b",
+      "hoursAgo": 14
+    }
+  ]
+}

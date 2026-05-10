@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Modal, StyleSheet, Alert } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Modal, StyleSheet } from 'react-native';
 import RenderListItem from './RenderListItem';
 import * as localStore from '../utils/localStorage';
 import { useThemeColor } from '../hooks/use-theme-color';
@@ -38,7 +38,10 @@ export default function RenderFundraisers({ projects = [], createIngredientsList
         <View style={[styles.modalWrap, { backgroundColor: bg }]}> 
           <View style={styles.modalInner}>
             <Text style={[styles.modalTitle, { color: text }]}>Saved Donation Lists</Text>
-            <FlatList data={savedLists} keyExtractor={i => i.title} renderItem={({ item }) => (
+            <FlatList
+              data={savedLists}
+              keyExtractor={i => i.title}
+              renderItem={({ item }) => (
               <View style={styles.savedRow}>
                 <Text style={{ color: text }}>{item.title}</Text>
                 <View style={{ flexDirection: 'row' }}>
@@ -46,8 +49,9 @@ export default function RenderFundraisers({ projects = [], createIngredientsList
                   <TouchableOpacity onPress={() => deleteSaved(item.title)} style={styles.iconBtn}><Text style={{ color: 'crimson' }}>Delete</Text></TouchableOpacity>
                 </View>
               </View>
-            )} ListEmptyComponent={() => <Text style={{ color: text }}>No saved lists</Text>} />
-            )} ListEmptyComponent={() => <Text style={{ color: text }}>No saved donation lists</Text>} />
+            )}
+              ListEmptyComponent={() => <Text style={{ color: text }}>No saved donation lists</Text>}
+            />
             <TouchableOpacity onPress={() => setShow(false)} style={styles.close}><Text style={{ color: text }}>Close</Text></TouchableOpacity>
           </View>
         </View>

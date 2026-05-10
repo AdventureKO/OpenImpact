@@ -3,6 +3,7 @@
     {
       "id": "prj-1",
       "name": "Clean Water for Village A",
+      "description": "Groundwater for Village A — procurement and deployment updates posted to the transparency feed with allocation tags.",
       "organizer": "Hope Foundation",
       "writer": "Hope Foundation",
       "current": 4200,
@@ -15,6 +16,7 @@
     {
       "id": "prj-2",
       "name": "School Supplies Drive",
+      "description": "Notebooks and hygiene kits for three districts — supplier staging and school deliveries tracked in the feed.",
       "organizer": "BrightStart",
       "writer": "BrightStart Team",
       "current": 1850,
@@ -27,6 +29,7 @@
     {
       "id": "prj-3",
       "name": "Reforestation - Plant 5,000 Trees",
+      "description": "Verified seedlings and zone planting — staff and infrastructure costs tagged per update.",
       "organizer": "GreenRoots",
       "writer": "GreenRoots Org",
       "current": 720,

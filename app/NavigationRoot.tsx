@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState, useContext } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -21,6 +21,13 @@ import Notifications from './notifications';
 import FundraiserDetail from '../components/FundraiserDetail';
 import { AuthContext } from '../context/AuthContext';
 import * as storage from '../utils/storage';
+import OrgDashboard from './org-dashboard';
+import OrgFunds from './org-funds';
+import OrgCauses from './org-causes';
+import OrgCauseDetail from './org-cause-detail';
+import MyImpact from './my-impact';
+import { USER_ROLE } from '@/constants/userRoles';
+import { hydrateDemoTransparencyFeeds, hydrateOrgDemoCausesIfNeeded } from '@/utils/hydrateDemoTransparency';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -72,10 +79,82 @@ function TabsNavigator() {
   );
 }
 
-export default function RootLayout() {
+function OrgTabsNavigator() {
+  const colorScheme = useColorScheme();
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Tabs" component={TabsNavigator} />
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarInactiveTintColor: '#999',
+        tabBarStyle: {
+          height: 78,
+          paddingBottom: 18,
+          paddingTop: 10,
+          backgroundColor: Colors[colorScheme ?? 'light'].background,
+          borderTopWidth: 1,
+          borderTopColor: Colors[colorScheme ?? 'light'].tabIconDefault,
+        },
+        tabBarIcon: ({ color, size }) => {
+          let iconName: keyof typeof MaterialCommunityIcons.glyphMap = 'view-dashboard';
+          if (route.name === 'OrgHome') iconName = 'view-dashboard';
+          else if (route.name === 'OrgFunds') iconName = 'cash-multiple';
+          else if (route.name === 'OrgCauses') iconName = 'bullhorn';
+          else if (route.name === 'Profile') iconName = 'account-circle';
+          return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+        },
+        tabBarLabel: ({ color }) => {
+          const labels: Record<string, string> = {
+            OrgHome: 'Home',
+            OrgFunds: 'Funds',
+            OrgCauses: 'Causes',
+            Profile: 'Profile',
+          };
+          return (
+            <Text style={{ color, fontSize: 12, fontWeight: '600' }}>
+              {labels[route.name] || ''}
+            </Text>
+          );
+        },
+      })}
+    >
+      <Tab.Screen name="OrgHome" component={OrgDashboard} options={{ title: 'Home' }} />
+      <Tab.Screen name="OrgFunds" component={OrgFunds} options={{ title: 'Funds' }} />
+      <Tab.Screen name="OrgCauses" component={OrgCauses} options={{ title: 'Causes' }} />
+      <Tab.Screen name="Profile" component={Profile} options={{ title: 'Profile' }} />
+    </Tab.Navigator>
+  );
+}
+
+export default function RootLayout() {
+  const { user, loading } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (!loading) {
+      hydrateDemoTransparencyFeeds();
+    }
+  }, [loading]);
+
+  useEffect(() => {
+    if (!loading && user?.role === USER_ROLE.ORGANIZATION) {
+      hydrateOrgDemoCausesIfNeeded(user);
+    }
+  }, [loading, user]);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+  const Tabbed = user?.role === USER_ROLE.ORGANIZATION ? OrgTabsNavigator : TabsNavigator;
+  return (
+    <Stack.Navigator
+      key={`${user?.email || 'anon'}-${user?.role || USER_ROLE.CONTRIBUTOR}`}
+      screenOptions={{ headerShown: false }}
+    >
+      <Stack.Screen name="Tabs" component={Tabbed} />
       <Stack.Screen name="FundraiserDetail" component={ProjectDetailWrapper} />
       <Stack.Screen name="Budget" component={Budget} />
       <Stack.Screen name="Analytics" component={Analytics} />
@@ -86,6 +165,9 @@ export default function RootLayout() {
       <Stack.Screen name="Donate" component={Donate} />
       <Stack.Screen name="DonateConfirm" component={DonateConfirm} />
       <Stack.Screen name="Receipt" component={Receipt} />
+      <Stack.Screen name="Browse" component={Projects} options={{ headerShown: false }} />
+      <Stack.Screen name="MyImpact" component={MyImpact} />
+      <Stack.Screen name="OrgCauseDetail" component={OrgCauseDetail} />
     </Stack.Navigator>
   );
 }

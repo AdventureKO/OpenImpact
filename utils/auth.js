@@ -10,6 +10,17 @@ const LEGACY_USER_KEY = 'auth_user';
 const LEGACY_HASH_KEY = 'auth_hash';
 const LEGACY_SALT_KEY = 'auth_salt';
 
+const ROLE_ORGANIZATION = 'organization';
+const ROLE_CONTRIBUTOR = 'contributor';
+
+/** Normalize persisted user shape (existing accounts may lack role). */
+export function normalizeUser(user) {
+  if (!user) return null;
+  let role = user.role;
+  if (role !== ROLE_ORGANIZATION && role !== ROLE_CONTRIBUTOR) role = ROLE_CONTRIBUTOR;
+  return { ...user, role };
+}
+
 async function generateSalt() {
   try {
     const bytes = await Crypto.getRandomBytesAsync(16);
@@ -56,7 +67,7 @@ async function migrateLegacyIfNeeded() {
   }
 }
 
-export async function registerUser({ email, password, name, isAdmin = false }) {
+export async function registerUser({ email, password, name, isAdmin = false, role: roleIn }) {
   if (!email || !password) throw new Error('Email and password required');
   // basic email format validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -79,7 +90,8 @@ export async function registerUser({ email, password, name, isAdmin = false }) {
   }
   const salt = await generateSalt();
   const hash = await hashPassword(password, salt);
-  const userObj = { email, name: name || '', createdAt: Date.now(), isAdmin: !!isAdmin };
+  const role = roleIn === ROLE_ORGANIZATION ? ROLE_ORGANIZATION : ROLE_CONTRIBUTOR;
+  const userObj = normalizeUser({ email, name: name || '', createdAt: Date.now(), isAdmin: !!isAdmin, role });
   users[email] = { user: userObj, hash, salt };
   await SecureStore.setItemAsync(USERS_KEY, JSON.stringify(users));
   try {
@@ -88,7 +100,7 @@ export async function registerUser({ email, password, name, isAdmin = false }) {
   } catch (e) {
     console.warn('registerUser: could not set session', e);
   }
-  console.log('registerUser: registered', email);
+  console.log('registerUser: registered', email, role);
   return userObj;
 }
 
@@ -103,7 +115,7 @@ export async function ensureAdminExists() {
     const defaultPassword = 'ImpactTrackAdmin123!';
     const salt = await generateSalt();
     const hash = await hashPassword(defaultPassword, salt);
-    const userObj = { email: adminEmail, name: 'Admin', createdAt: Date.now(), isAdmin: true };
+    const userObj = normalizeUser({ email: adminEmail, name: 'Admin', createdAt: Date.now(), isAdmin: true, role: ROLE_CONTRIBUTOR });
     users[adminEmail] = { user: userObj, hash, salt };
     await SecureStore.setItemAsync(USERS_KEY, JSON.stringify(users));
     console.log('ensureAdminExists: created admin user', adminEmail);
@@ -128,7 +140,7 @@ export async function loginUser(email, password) {
   if (hash !== expected) throw new Error('Invalid credentials');
   // set a small session token in secure store
   await SecureStore.setItemAsync(SESSION_KEY, JSON.stringify({ email: entry.user.email, ts: Date.now() }));
-  return entry.user;
+  return normalizeUser(entry.user);
 }
 
 export async function logoutUser() {
@@ -147,7 +159,7 @@ export async function getCurrentUser() {
     if (!usersRaw) return null;
     const users = JSON.parse(usersRaw);
     const entry = users[email];
-    return entry ? entry.user : null;
+    return entry ? normalizeUser(entry.user) : null;
   } catch (e) {
     return null;
   }
@@ -244,4 +256,15 @@ export async function verifyTwoFactorCode(email, code) {
   return true;
 }
 
-export default { registerUser, loginUser, logoutUser, getCurrentUser, initiatePasswordReset, resetPassword, enableTwoFactor, generateTwoFactorCode, verifyTwoFactorCode };
+export default {
+  registerUser,
+  loginUser,
+  logoutUser,
+  getCurrentUser,
+  normalizeUser,
+  initiatePasswordReset,
+  resetPassword,
+  enableTwoFactor,
+  generateTwoFactorCode,
+  verifyTwoFactorCode,
+};

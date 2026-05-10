@@ -1,11 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import { SafeAreaView, View, Text, FlatList, TouchableOpacity, ActivityIndicator, Pressable, TextInput, Image, Modal, ScrollView, StyleSheet } from 'react-native';
-import { useThemeColor } from '../hooks/use-theme-color';
-import { useNavigation } from '@react-navigation/native';
-import MOCK_SERVER_URL from '../constants/api';
-import seedData from '../data/seedFundraisers.json';
-import * as storage from '../utils/storage';
-import * as ImagePicker from 'expo-image-picker';
+import { DonationJourneyBar } from "@/components/DonationJourneyBar";
+import { IntegrityStars } from "@/components/IntegrityStars";
+import { USER_ROLE } from "@/constants/userRoles";
+import { advanceDonationJourney } from "@/utils/donationProgress";
+import { on as onEvent } from "@/utils/events";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import {
+    ActivityIndicator,
+    FlatList,
+    Image,
+    Modal,
+    Pressable,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from "react-native";
+import MOCK_SERVER_URL from "../constants/api";
+import { AuthContext } from "../context/AuthContext";
+import seedData from "../data/seedFundraisers.json";
+import { useThemeColor } from "../hooks/use-theme-color";
+import * as storage from "../utils/storage";
 
 function ProgressBarTrack({ value = 0 }: { value?: number }) {
   const v = Math.min(Math.max(value, 0), 1);
@@ -21,167 +40,562 @@ const progressStyles = StyleSheet.create({
   track: {
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#e8e8e8',
-    overflow: 'hidden',
+    backgroundColor: "#e8e8e8",
+    overflow: "hidden",
   },
   fill: {
-    height: '100%',
+    height: "100%",
     borderRadius: 4,
-    backgroundColor: '#27ae60',
+    backgroundColor: "#27ae60",
   },
 });
 
 export default function TrackScreen() {
   const navigation = useNavigation();
-  const bg = useThemeColor({}, 'background');
-  const text = useThemeColor({}, 'text');
+  const auth = useContext(AuthContext);
+  const bg = useThemeColor({}, "background");
+  const text = useThemeColor({}, "text");
+  const [myDonations, setMyDonations] = useState<
+    {
+      id: string;
+      amount?: number;
+      projectId?: string | null;
+      journeyStep?: number;
+      allocationCategory?: string | null;
+    }[]
+  >([]);
   const [fundraisers, setFundraisers] = useState([]);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [expandedId, setExpandedId] = useState(null);
   const [updates, setUpdates] = useState([]);
-  const [newText, setNewText] = useState('');
+  const [newText, setNewText] = useState("");
   const [newImageUri, setNewImageUri] = useState(null);
   const [preview, setPreview] = useState({ visible: false, item: null });
 
   useEffect(() => {
     setLoading(true);
-    fetch(`${MOCK_SERVER_URL}/api/fundraisers`).then(r=>r.json()).then(setFundraisers).catch(()=>{
-      try{ setFundraisers(seedData.fundraisers || []); }catch(e){ setFundraisers([]); }
-    }).finally(()=>setLoading(false));
+    fetch(`${MOCK_SERVER_URL}/api/fundraisers`)
+      .then((r) => r.json())
+      .then(setFundraisers)
+      .catch(() => {
+        try {
+          setFundraisers(seedData.fundraisers || []);
+        } catch (e) {
+          setFundraisers([]);
+        }
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
-    (async ()=>{
-      try{
-        const u = await storage.load('timelineUpdates', []);
+    (async () => {
+      try {
+        const u = await storage.load("timelineUpdates", []);
         setUpdates(u || []);
-      }catch(e){ console.warn('load timeline updates', e); }
+      } catch (e) {
+        console.warn("load timeline updates", e);
+      }
     })();
   }, []);
 
-  if (loading) return <View style={{flex:1,justifyContent:'center',alignItems:'center'}}><ActivityIndicator /></View>;
+  useEffect(() => {
+    // subscribe to org feed posts so Track picks up official updates quickly
+    const unsub = onEvent("causeUpdated", (payload) => {
+      try {
+        const it = payload?.item || payload;
+        // prepend to local timelineUpdates so Track shows it in the list
+        setUpdates((prev) => [it, ...(prev || [])]);
+      } catch (e) {
+        console.warn("track: causeUpdated handler failed", e);
+      }
+    });
+    return () => {
+      try {
+        unsub();
+      } catch (e) {}
+    };
+  }, []);
 
-  const filtered = (fundraisers || []).filter(f => {
+  const reloadMyDonations = useCallback(async () => {
+    try {
+      if (!auth?.user) {
+        setMyDonations([]);
+        return;
+      }
+      const d = (await storage.loadForUser(auth.user, "donations", [])) || [];
+      setMyDonations(d);
+    } catch (e) {
+      console.warn("reloadMyDonations", e);
+    }
+  }, [auth?.user]);
+
+  useFocusEffect(
+    useCallback(() => {
+      reloadMyDonations();
+    }, [reloadMyDonations]),
+  );
+
+  const canPostCauseUpdates =
+    !!auth?.user &&
+    (auth.user.role === USER_ROLE.ORGANIZATION || auth.user.isAdmin);
+
+  if (loading)
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator />
+      </View>
+    );
+
+  const filtered = (fundraisers || []).filter((f) => {
     if (!query) return true;
-    const q = String(query || '').toLowerCase().trim();
-    return String(f.name || '').toLowerCase().includes(q)
-      || String(f.organizer || f.writer || '').toLowerCase().includes(q)
-      || String(f.id || '').toLowerCase().includes(q);
+    const q = String(query || "")
+      .toLowerCase()
+      .trim();
+    return (
+      String(f.name || "")
+        .toLowerCase()
+        .includes(q) ||
+      String(f.organizer || f.writer || "")
+        .toLowerCase()
+        .includes(q) ||
+      String(f.id || "")
+        .toLowerCase()
+        .includes(q)
+    );
   });
 
-  const toggle = id => setExpandedId(expandedId === id ? null : id);
+  const toggle = (id) => setExpandedId(expandedId === id ? null : id);
 
   const pickImageForUpdate = async () => {
     try {
       const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (!perm.granted) return alert('Permission required to pick images');
-      const res = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 0.7 });
+      if (!perm.granted) return alert("Permission required to pick images");
+      const res = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 0.7,
+      });
       if (!res || res.canceled) return;
       const uri = res.assets ? res.assets[0].uri : res.uri;
       setNewImageUri(uri);
-    } catch (e) { console.warn('pick update image', e); }
+    } catch (e) {
+      console.warn("pick update image", e);
+    }
   };
 
   const saveUpdate = async (fundraiserId) => {
-    if (!newText && !newImageUri) return alert('Add a comment or image');
-    const obj = { id: `up-${Date.now()}`, fundraiserId: fundraiserId, text: newText || '', uri: newImageUri || null, date: Date.now() };
+    if (!newText && !newImageUri) return alert("Add a comment or image");
+    const obj = {
+      id: `up-${Date.now()}`,
+      fundraiserId: fundraiserId,
+      text: newText || "",
+      uri: newImageUri || null,
+      date: Date.now(),
+    };
     const next = [obj, ...(updates || [])];
-    try{
-      await storage.save('timelineUpdates', next);
+    try {
+      await storage.save("timelineUpdates", next);
       setUpdates(next);
-      setNewText(''); setNewImageUri(null);
-    }catch(e){ console.warn('save update', e); alert('Could not save update'); }
+      setNewText("");
+      setNewImageUri(null);
+    } catch (e) {
+      console.warn("save update", e);
+      alert("Could not save update");
+    }
   };
 
-  const updatesFor = (id) => (updates || []).filter(u => String(u.fundraiserId) === String(id)).sort((a,b)=>b.date - a.date);
+  const updatesFor = (id) =>
+    (updates || [])
+      .filter((u) => String(u.fundraiserId) === String(id))
+      .sort((a, b) => b.date - a.date);
 
   return (
-    <View style={{flex:1, padding:16}}>
-      <Text style={{fontSize:20, fontWeight:'700', marginBottom:8}}>Track Donations</Text>
-      <Text style={{color:'#666', marginBottom:12}}>Follow progress, milestones, photos and updates from causes you care about.</Text>
+    <View style={{ flex: 1, padding: 16 }}>
+      <Text style={{ fontSize: 20, fontWeight: "700", marginBottom: 8 }}>
+        Track Donations
+      </Text>
+      <Text style={{ color: "#666", marginBottom: 12 }}>
+        Follow progress, milestones, photos and updates from causes you care
+        about.
+      </Text>
 
-      <View style={{marginBottom:12}}>
-        <TextInput placeholder="Search causes, organizers, or id" value={query} onChangeText={setQuery} style={{borderWidth:1, borderColor:'#eee', padding:8, borderRadius:8, backgroundColor: bg, color: text}} placeholderTextColor={'#888'} />
+      {auth?.user && myDonations.length > 0 ? (
+        <View
+          style={{
+            marginBottom: 16,
+            padding: 12,
+            backgroundColor: "#f8fafc",
+            borderRadius: 10,
+            borderWidth: 1,
+            borderColor: "#e2e8f0",
+          }}
+        >
+          <Text style={{ fontWeight: "800", marginBottom: 8, color: text }}>
+            Your contribution journey
+          </Text>
+          <Text style={{ fontSize: 12, color: "#64748b", marginBottom: 10 }}>
+            Each donation moves through collected → allocated → purchasing →
+            deployed → impact verified (demo progression).
+          </Text>
+          {myDonations.slice(0, 8).map((d) => (
+            <View
+              key={d.id}
+              style={{
+                marginBottom: 14,
+                paddingBottom: 12,
+                borderBottomWidth: StyleSheet.hairlineWidth,
+                borderBottomColor: "#cbd5e1",
+              }}
+            >
+              <Text style={{ fontWeight: "700", color: text }}>
+                ${Number(d.amount || 0).toFixed(2)} → Cause{" "}
+                {String(d.projectId || "—")}
+              </Text>
+              <Text style={{ fontSize: 11, color: "#64748b", marginBottom: 6 }}>
+                {d.allocationCategory
+                  ? `Use: ${d.allocationCategory}`
+                  : "Use: pending allocation from organization"}
+              </Text>
+              <DonationJourneyBar currentStep={d.journeyStep ?? 0} />
+              {(d.journeyStep ?? 0) < 4 ? (
+                <TouchableOpacity
+                  onPress={async () => {
+                    await advanceDonationJourney(auth.user, d.id);
+                    await reloadMyDonations();
+                  }}
+                  style={{
+                    marginTop: 8,
+                    alignSelf: "flex-start",
+                    backgroundColor: "#e0f2fe",
+                    paddingHorizontal: 10,
+                    paddingVertical: 6,
+                    borderRadius: 8,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      fontWeight: "700",
+                      color: "#0369a1",
+                    }}
+                  >
+                    Simulate next stage (demo)
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: "#059669",
+                    marginTop: 6,
+                    fontWeight: "600",
+                  }}
+                >
+                  Impact trail complete
+                </Text>
+              )}
+            </View>
+          ))}
+        </View>
+      ) : null}
+
+      <View style={{ marginBottom: 12 }}>
+        <TextInput
+          placeholder="Search causes, organizers, or id"
+          value={query}
+          onChangeText={setQuery}
+          style={{
+            borderWidth: 1,
+            borderColor: "#eee",
+            padding: 8,
+            borderRadius: 8,
+            backgroundColor: bg,
+            color: text,
+          }}
+          placeholderTextColor={"#888"}
+        />
       </View>
-      <View style={{flexDirection:'row', marginBottom:12}}>
-        <TouchableOpacity onPress={() => navigation.navigate('Milestones')} style={{padding:8, backgroundColor:'#eee', borderRadius:6, marginRight:8}}>
+      <View style={{ flexDirection: "row", marginBottom: 12 }}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Milestones")}
+          style={{
+            padding: 8,
+            backgroundColor: "#eee",
+            borderRadius: 6,
+            marginRight: 8,
+          }}
+        >
           <Text>Milestones</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Analytics')} style={{padding:8, backgroundColor:'#eee', borderRadius:6}}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Analytics")}
+          style={{ padding: 8, backgroundColor: "#eee", borderRadius: 6 }}
+        >
           <Text>Analytics</Text>
         </TouchableOpacity>
       </View>
       <FlatList
         data={filtered}
         keyExtractor={(item, index) => item?.id?.toString() ?? `f-${index}`}
-        renderItem={({item}) => {
-          const progress = item.current && item.goal ? Math.min(item.current / item.goal, 1) : (item.progress || 0);
+        renderItem={({ item }) => {
+          const progress =
+            item.current && item.goal
+              ? Math.min(item.current / item.goal, 1)
+              : item.progress || 0;
           const milestones = item.milestones || item.checkpoints || [];
           const isExpanded = expandedId === item.id;
 
           return (
-            <View style={{padding:12, borderRadius:8, backgroundColor:'#fff', marginBottom:8}}>
-              <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+            <View
+              style={{
+                padding: 12,
+                borderRadius: 8,
+                backgroundColor: "#fff",
+                marginBottom: 8,
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
                 <View>
-                  <Text style={{fontWeight:'700'}}>{item.name}</Text>
-                  <Text style={{color:'#666'}}>{item.organizer || item.writer || item.author}</Text>
+                  <Text style={{ fontWeight: "700" }}>{item.name}</Text>
+                  <Text style={{ color: "#666" }}>
+                    {item.organizer || item.writer || item.author}
+                  </Text>
                 </View>
-                <Pressable onPress={() => toggle(item.id)} style={{padding:8}}>
-                  <Text style={{color:'#007aff'}}>{isExpanded ? 'Collapse' : 'Details'}</Text>
+                <Pressable
+                  onPress={() => toggle(item.id)}
+                  style={{ padding: 8 }}
+                >
+                  <Text style={{ color: "#007aff" }}>
+                    {isExpanded ? "Collapse" : "Details"}
+                  </Text>
                 </Pressable>
               </View>
 
-              <View style={{marginTop:8}}>
-                <Text style={{fontSize:12,color:'#444'}}>Progress</Text>
-                <View style={{marginVertical:6}}>
+              <View style={{ marginTop: 8 }}>
+                <Text style={{ fontSize: 12, color: "#444" }}>Progress</Text>
+                <View style={{ marginVertical: 6 }}>
                   <ProgressBarTrack value={progress} />
-                  <Text style={{fontSize:12, color:'#666', marginTop:6}}>{Math.round((progress || 0) * 100)}% • ${item.current || 0} raised</Text>
+                  <Text style={{ fontSize: 12, color: "#666", marginTop: 6 }}>
+                    {Math.round((progress || 0) * 100)}% • ${item.current || 0}{" "}
+                    raised
+                  </Text>
                 </View>
               </View>
 
-                  {isExpanded && (
-                <View style={{marginTop:8}}>
-                  <Text style={{fontWeight:'700', marginBottom:6}}>Milestones</Text>
-                  {milestones.length === 0 && <Text style={{color:'#666'}}>No milestones set for this cause.</Text>}
+              <IntegrityStars
+                causeId={String(item.id)}
+                canRate
+                showExplanation={false}
+              />
+
+              {isExpanded && (
+                <View style={{ marginTop: 8 }}>
+                  <Text style={{ fontWeight: "700", marginBottom: 6 }}>
+                    Milestones
+                  </Text>
+                  {milestones.length === 0 && (
+                    <Text style={{ color: "#666" }}>
+                      No milestones set for this cause.
+                    </Text>
+                  )}
                   {milestones.map((m, idx) => (
-                    <View key={idx} style={{padding:8, backgroundColor:'#f7f7f7', borderRadius:6, marginBottom:6}}>
-                      <Text style={{fontWeight:'600'}}>{m.title || `Step ${idx+1}`}</Text>
-                      <Text style={{color:'#666', fontSize:12}}>{m.note || m.description || ''}</Text>
-                      <Text style={{fontSize:12, color:m.completed ? 'green' : '#999', marginTop:6}}>{m.completed ? 'Completed' : 'Pending'}</Text>
+                    <View
+                      key={idx}
+                      style={{
+                        padding: 8,
+                        backgroundColor: "#f7f7f7",
+                        borderRadius: 6,
+                        marginBottom: 6,
+                      }}
+                    >
+                      <Text style={{ fontWeight: "600" }}>
+                        {m.title || `Step ${idx + 1}`}
+                      </Text>
+                      <Text style={{ color: "#666", fontSize: 12 }}>
+                        {m.note || m.description || ""}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          color: m.completed ? "green" : "#999",
+                          marginTop: 6,
+                        }}
+                      >
+                        {m.completed ? "Completed" : "Pending"}
+                      </Text>
                     </View>
                   ))}
 
-                  <Text style={{fontWeight:'700', marginTop:8}}>Photos & Updates</Text>
-                  <Text style={{color:'#666', marginBottom:6}}>Share images and short updates about progress.</Text>
+                  <Text style={{ fontWeight: "700", marginTop: 8 }}>
+                    Photos & Updates
+                  </Text>
+                  <Text style={{ color: "#666", marginBottom: 6 }}>
+                    {canPostCauseUpdates
+                      ? "Share images and short updates about progress."
+                      : "Organizations post official updates; browse the transparency feed on each cause."}
+                  </Text>
 
-                  <View style={{padding:8, backgroundColor:'#fff', borderRadius:8, marginBottom:8}}>
-                    <TextInput placeholder="Write an update or note" value={newText} onChangeText={setNewText} style={{borderWidth:1, borderColor:'#eee', padding:8, borderRadius:6, marginBottom:8, backgroundColor: bg, color: text}} placeholderTextColor={'#888'} />
-                    {newImageUri ? <Image source={{uri:newImageUri}} style={{height:160, borderRadius:8, marginBottom:8}} /> : null}
-                    <View style={{flexDirection:'row'}}>
-                      <TouchableOpacity onPress={pickImageForUpdate} style={{padding:8, backgroundColor:'#eee', borderRadius:6, marginRight:8}}><Text>Pick Photo</Text></TouchableOpacity>
-                      <TouchableOpacity onPress={() => saveUpdate(item.id)} style={{padding:8, backgroundColor:'#27ae60', borderRadius:6}}><Text style={{color:'#fff'}}>Post Update</Text></TouchableOpacity>
+                  {canPostCauseUpdates ? (
+                    <View
+                      style={{
+                        padding: 8,
+                        backgroundColor: "#fff",
+                        borderRadius: 8,
+                        marginBottom: 8,
+                      }}
+                    >
+                      <TextInput
+                        placeholder="Write an update or note"
+                        value={newText}
+                        onChangeText={setNewText}
+                        style={{
+                          borderWidth: 1,
+                          borderColor: "#eee",
+                          padding: 8,
+                          borderRadius: 6,
+                          marginBottom: 8,
+                          backgroundColor: bg,
+                          color: text,
+                        }}
+                        placeholderTextColor={"#888"}
+                      />
+                      {newImageUri ? (
+                        <Image
+                          source={{ uri: newImageUri }}
+                          style={{
+                            height: 160,
+                            borderRadius: 8,
+                            marginBottom: 8,
+                          }}
+                        />
+                      ) : null}
+                      <View style={{ flexDirection: "row" }}>
+                        <TouchableOpacity
+                          onPress={pickImageForUpdate}
+                          style={{
+                            padding: 8,
+                            backgroundColor: "#eee",
+                            borderRadius: 6,
+                            marginRight: 8,
+                          }}
+                        >
+                          <Text>Pick Photo</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() => saveUpdate(item.id)}
+                          style={{
+                            padding: 8,
+                            backgroundColor: "#27ae60",
+                            borderRadius: 6,
+                          }}
+                        >
+                          <Text style={{ color: "#fff" }}>Post Update</Text>
+                        </TouchableOpacity>
+                      </View>
                     </View>
-                  </View>
+                  ) : null}
 
-                  {updatesFor(item.id).map(u => (
-                    <View key={u.id} style={{padding:8, backgroundColor:'#f9fafb', borderRadius:6, marginBottom:8}}>
-                      <Text style={{color:'#666', fontSize:12}}>{new Date(u.date).toLocaleString()}</Text>
-                      {u.text ? <Text style={{marginTop:6}}>{u.text}</Text> : null}
-                      {u.uri ? <TouchableOpacity onPress={()=>{ setPreview({visible:true,item:u}) }}><Image source={{uri:u.uri}} style={{height:160, borderRadius:8, marginTop:8}} /></TouchableOpacity> : null}
+                  {updatesFor(item.id).map((u) => (
+                    <View
+                      key={u.id}
+                      style={{
+                        padding: 8,
+                        backgroundColor: "#f9fafb",
+                        borderRadius: 6,
+                        marginBottom: 8,
+                      }}
+                    >
+                      <Text style={{ color: "#666", fontSize: 12 }}>
+                        {new Date(u.date).toLocaleString()}
+                      </Text>
+                      {u.text ? (
+                        <Text style={{ marginTop: 6 }}>{u.text}</Text>
+                      ) : null}
+                      {u.uri ? (
+                        <TouchableOpacity
+                          onPress={() => {
+                            setPreview({ visible: true, item: u });
+                          }}
+                        >
+                          <Image
+                            source={{ uri: u.uri }}
+                            style={{
+                              height: 160,
+                              borderRadius: 8,
+                              marginTop: 8,
+                            }}
+                          />
+                        </TouchableOpacity>
+                      ) : null}
                     </View>
                   ))}
 
-                  <Text style={{fontWeight:'700', marginTop:8}}>Photos</Text>
-                  <View style={{height:100, borderRadius:8, backgroundColor:'#eef2ff', justifyContent:'center', alignItems:'center', marginBottom:8}}>
-                    <Text style={{color:'#444'}}>Map / Location Placeholder</Text>
+                  <Text style={{ fontWeight: "700", marginTop: 8 }}>
+                    Photos
+                  </Text>
+                  <View
+                    style={{
+                      height: 100,
+                      borderRadius: 8,
+                      backgroundColor: "#eef2ff",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginBottom: 8,
+                    }}
+                  >
+                    <Text style={{ color: "#444" }}>
+                      Map / Location Placeholder
+                    </Text>
                   </View>
 
-                  <View style={{flexDirection:'row'}}>
-                      <TouchableOpacity onPress={() => navigation.navigate('FundraiserDetail', { id: item.id })} style={{padding:8, backgroundColor:'#eee', borderRadius:6, marginRight:8}}>
-                        <Text>Open Cause</Text>
-                      </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('Donate', { id: item.id })} style={{padding:8, backgroundColor:'#ffd39b', borderRadius:6}}>
+                  <View
+                    style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}
+                  >
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate("FundraiserDetail", { id: item.id })
+                      }
+                      style={{
+                        padding: 8,
+                        backgroundColor: "#eee",
+                        borderRadius: 6,
+                        marginRight: 8,
+                      }}
+                    >
+                      <Text>Open Cause</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate(
+                          "OrgCauseDetail" as never,
+                          { id: String(item.id) } as never,
+                        )
+                      }
+                      style={{
+                        padding: 8,
+                        backgroundColor: "#dbeafe",
+                        borderRadius: 6,
+                        marginRight: 8,
+                      }}
+                    >
+                      <Text>Transparency feed</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate("Donate", { id: item.id })
+                      }
+                      style={{
+                        padding: 8,
+                        backgroundColor: "#ffd39b",
+                        borderRadius: 6,
+                      }}
+                    >
                       <Text>Donate / Give</Text>
                     </TouchableOpacity>
                   </View>
@@ -192,13 +606,33 @@ export default function TrackScreen() {
         }}
       />
 
-      <Modal visible={preview.visible} animationType="slide" onRequestClose={()=>setPreview({visible:false,item:null})}>
-        <SafeAreaView style={{flex:1, backgroundColor:'#000'}}>
-          <ScrollView contentContainerStyle={{padding:16, alignItems:'center'}}>
-            {preview.item?.uri ? <Image source={{uri: preview.item.uri}} style={{width:'100%', height:400, resizeMode:'contain'}} /> : <Text style={{color:'#fff'}}>No preview</Text>}
-            {preview.item?.text ? <Text style={{color:'#fff', marginTop:12}}>{preview.item.text}</Text> : null}
-            <View style={{height:16}} />
-            <TouchableOpacity onPress={()=>setPreview({visible:false,item:null})} style={{padding:12, backgroundColor:'#fff', borderRadius:8}}>
+      <Modal
+        visible={preview.visible}
+        animationType="slide"
+        onRequestClose={() => setPreview({ visible: false, item: null })}
+      >
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }}>
+          <ScrollView
+            contentContainerStyle={{ padding: 16, alignItems: "center" }}
+          >
+            {preview.item?.uri ? (
+              <Image
+                source={{ uri: preview.item.uri }}
+                style={{ width: "100%", height: 400, resizeMode: "contain" }}
+              />
+            ) : (
+              <Text style={{ color: "#fff" }}>No preview</Text>
+            )}
+            {preview.item?.text ? (
+              <Text style={{ color: "#fff", marginTop: 12 }}>
+                {preview.item.text}
+              </Text>
+            ) : null}
+            <View style={{ height: 16 }} />
+            <TouchableOpacity
+              onPress={() => setPreview({ visible: false, item: null })}
+              style={{ padding: 12, backgroundColor: "#fff", borderRadius: 8 }}
+            >
               <Text>Close</Text>
             </TouchableOpacity>
           </ScrollView>
@@ -207,4 +641,3 @@ export default function TrackScreen() {
     </View>
   );
 }
-

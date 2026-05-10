@@ -1,0 +1,99 @@
+{
+  "feeds": [
+    {
+      "causeId": "prj-1",
+      "posts": [
+        {
+          "id": "demo-seed-prj1-1",
+          "hoursAgo": 36,
+          "text": "Funds received from weekend donors — thank you. Internal allocation: 72% program (water hardware), 18% operations, 10% reserve.",
+          "authorName": "Hope Foundation",
+          "journeyStage": 1,
+          "allocationTag": "Operations"
+        },
+        {
+          "id": "demo-seed-prj1-2",
+          "hoursAgo": 18,
+          "text": "Purchasing: pumps and piping ordered from verified supplier (invoice #WF-2041). ETA on-site next week.",
+          "authorName": "Hope Foundation",
+          "journeyStage": 2,
+          "allocationTag": "Program"
+        },
+        {
+          "id": "demo-seed-prj1-3",
+          "hoursAgo": 3,
+          "text": "Deployed: drilling crew mobilized to Village A. Photo proof attached at site handoff.",
+          "authorName": "Hope Foundation",
+          "journeyStage": 3,
+          "allocationTag": "Infrastructure"
+        },
+        {
+          "id": "demo-seed-prj1-4",
+          "hoursAgo": 0.25,
+          "text": "Impact verified: first 120 households connected to clean water line — meter readings logged.",
+          "authorName": "Hope Foundation",
+          "journeyStage": 4,
+          "allocationTag": "Program"
+        }
+      ]
+    },
+    {
+      "causeId": "prj-2",
+      "posts": [
+        {
+          "id": "demo-seed-prj2-1",
+          "hoursAgo": 48,
+          "text": "Collected and allocated: supplier contracts signed for notebooks and hygiene kits across 3 districts.",
+          "authorName": "BrightStart Team",
+          "journeyStage": 1,
+          "allocationTag": "Program"
+        },
+        {
+          "id": "demo-seed-prj2-2",
+          "hoursAgo": 12,
+          "text": "Purchasing complete — pallets staged at regional warehouse. Staff overtime logged for distribution weekend.",
+          "authorName": "BrightStart Team",
+          "journeyStage": 2,
+          "allocationTag": "Staff"
+        },
+        {
+          "id": "demo-seed-prj2-3",
+          "hoursAgo": 1,
+          "text": "Deployed: first school deliveries completed; principal sign-off sheets uploaded internally.",
+          "authorName": "BrightStart Team",
+          "journeyStage": 3,
+          "allocationTag": "Program"
+        }
+      ]
+    },
+    {
+      "causeId": "prj-3",
+      "posts": [
+        {
+          "id": "demo-seed-prj3-1",
+          "hoursAgo": 72,
+          "text": "Opening balance allocated: nursery contracts + transport budget locked for planting season.",
+          "authorName": "GreenRoots Org",
+          "journeyStage": 1,
+          "allocationTag": "Operations"
+        },
+        {
+          "id": "demo-seed-prj3-2",
+          "hoursAgo": 24,
+          "text": "Seedlings procured — batch certification linked to vendor traceability ID.",
+          "authorName": "GreenRoots Org",
+          "journeyStage": 2,
+          "allocationTag": "Program"
+        },
+        {
+          "id": "demo-seed-prj3-3",
+          "hoursAgo": 2,
+          "text": "Zone 4 planting underway — volunteer hours and soil prep costs tagged per transparency policy.",
+          "authorName": "GreenRoots Org",
+          "journeyStage": 3,
+          "allocationTag": "Infrastructure"
+        }
+      ]
+    }
+  ]
+}

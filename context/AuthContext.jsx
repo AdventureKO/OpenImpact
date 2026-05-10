@@ -2,7 +2,13 @@ import React, { createContext, useState, useEffect } from 'react';
 import * as auth from '../utils/auth';
 import * as localStore from '../utils/localStorage';
 
-export const AuthContext = createContext({ user: null, signIn: async () => {}, signOut: async () => {}, signUp: async () => {} });
+export const AuthContext = createContext({
+  user: null,
+  loading: true,
+  signIn: async () => {},
+  signOut: async () => {},
+  signUp: async () => {},
+});
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -29,8 +35,8 @@ export const AuthProvider = ({ children }) => {
     return u;
   };
 
-  const signUp = async ({ email, password, name }) => {
-    const u = await auth.registerUser({ email, password, name });
+  const signUp = async ({ email, password, name, role }) => {
+    const u = await auth.registerUser({ email, password, name, role });
     console.log('AuthContext.signUp: registered and signed in', u && u.email);
     setUser(u);
     try { await localStore.setUser(u); } catch (e) { console.warn('localStore setUser failed', e); }
