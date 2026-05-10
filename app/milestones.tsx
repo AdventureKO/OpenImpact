@@ -11,14 +11,24 @@ import {
 } from "react-native";
 import * as storage from "../utils/storage";
 
+interface Milestone {
+  id: string;
+  title: string;
+  note: string;
+  completed: boolean;
+  date: number;
+}
+
 export default function MilestonesScreen() {
   const navigation = useNavigation();
-  const [list, setList] = useState([]);
+  const [list, setList] = useState<Milestone[]>([]);
 
   useEffect(() => {
     (async () => {
       try {
-        const m = await storage.load("milestones", []);
+        const m = (await storage.load("milestones", null)) as
+          | Milestone[]
+          | null;
         setList(m || []);
       } catch (e) {
         console.warn("load milestones", e);
@@ -39,7 +49,7 @@ export default function MilestonesScreen() {
     setList(next);
   };
 
-  const toggle = async (id) => {
+  const toggle = async (id: string) => {
     const next = list.map((i) =>
       i.id === id ? { ...i, completed: !i.completed } : i,
     );
