@@ -237,65 +237,93 @@ export default function TrackScreen() {
             Each donation moves through collected → allocated → purchasing →
             deployed → impact verified (demo progression).
           </Text>
-          {myDonations.slice(0, 8).map((d) => (
-            <View
-              key={d.id}
-              style={{
-                marginBottom: 14,
-                paddingBottom: 12,
-                borderBottomWidth: StyleSheet.hairlineWidth,
-                borderBottomColor: "#cbd5e1",
-              }}
-            >
-              <Text style={{ fontWeight: "700", color: text }}>
-                ${Number(d.amount || 0).toFixed(2)} → Cause{" "}
-                {String(d.projectId || "—")}
-              </Text>
-              <Text style={{ fontSize: 11, color: "#64748b", marginBottom: 6 }}>
-                {d.allocationCategory
-                  ? `Use: ${d.allocationCategory}`
-                  : "Use: pending allocation from organization"}
-              </Text>
-              <DonationJourneyBar currentStep={d.journeyStep ?? 0} />
-              {(d.journeyStep ?? 0) < 4 ? (
-                <TouchableOpacity
-                  onPress={async () => {
-                    await advanceDonationJourney(auth.user, d.id);
-                    await reloadMyDonations();
-                  }}
-                  style={{
-                    marginTop: 8,
-                    alignSelf: "flex-start",
-                    backgroundColor: "#e0f2fe",
-                    paddingHorizontal: 10,
-                    paddingVertical: 6,
-                    borderRadius: 8,
-                  }}
+          {myDonations.slice(0, 8).map((d) => {
+            const donationDate = new Date(
+              parseInt(d.id.split("-")[1]) || Date.now(),
+            );
+            const dateStr = donationDate.toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year:
+                donationDate.getFullYear() !== new Date().getFullYear()
+                  ? "numeric"
+                  : undefined,
+            });
+            const timeStr = donationDate.toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            });
+
+            return (
+              <View
+                key={d.id}
+                style={{
+                  marginBottom: 14,
+                  paddingBottom: 12,
+                  borderBottomWidth: StyleSheet.hairlineWidth,
+                  borderBottomColor: "#cbd5e1",
+                }}
+              >
+                <Text
+                  style={{ fontWeight: "700", color: text, marginBottom: 4 }}
                 >
+                  ${Number(d.amount || 0).toFixed(2)} → Cause{" "}
+                  {String(d.projectId || "—")}
+                </Text>
+                <Text
+                  style={{ fontSize: 11, color: "#64748b", marginBottom: 2 }}
+                >
+                  📅 {dateStr} at {timeStr}
+                </Text>
+                <Text
+                  style={{ fontSize: 11, color: "#64748b", marginBottom: 6 }}
+                >
+                  {d.allocationCategory
+                    ? `📌 Use: ${d.allocationCategory}`
+                    : "📌 Use: pending allocation from organization"}
+                </Text>
+                <DonationJourneyBar currentStep={d.journeyStep ?? 0} />
+                {(d.journeyStep ?? 0) < 4 ? (
+                  <TouchableOpacity
+                    onPress={async () => {
+                      await advanceDonationJourney(auth.user, d.id);
+                      await reloadMyDonations();
+                    }}
+                    style={{
+                      marginTop: 8,
+                      alignSelf: "flex-start",
+                      backgroundColor: "#e0f2fe",
+                      paddingHorizontal: 10,
+                      paddingVertical: 6,
+                      borderRadius: 8,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        fontWeight: "700",
+                        color: "#0369a1",
+                      }}
+                    >
+                      Simulate next stage (demo)
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
                   <Text
                     style={{
                       fontSize: 12,
-                      fontWeight: "700",
-                      color: "#0369a1",
+                      color: "#059669",
+                      marginTop: 6,
+                      fontWeight: "600",
                     }}
                   >
-                    Simulate next stage (demo)
+                    Impact trail complete
                   </Text>
-                </TouchableOpacity>
-              ) : (
-                <Text
-                  style={{
-                    fontSize: 12,
-                    color: "#059669",
-                    marginTop: 6,
-                    fontWeight: "600",
-                  }}
-                >
-                  Impact trail complete
-                </Text>
-              )}
-            </View>
-          ))}
+                )}
+              </View>
+            );
+          })}
         </View>
       ) : null}
 
