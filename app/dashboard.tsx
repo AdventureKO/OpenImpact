@@ -152,6 +152,60 @@ export default function Dashboard() {
         </TouchableOpacity>
 
         <View style={{ height: 16 }} />
+
+        {/* Demo Features Banner */}
+        {auth?.user?.role !== USER_ROLE.ORGANIZATION && totalDonated > 0 && (
+          <View style={styles.demoBanner}>
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: "700",
+                color: "#1f2937",
+                marginBottom: 10,
+              }}
+            >
+              ✨ Unique Transparency Features
+            </Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("MyImpact")}
+              style={styles.demoBannerButton}
+            >
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontWeight: "600",
+                  color: "#0369a1",
+                  marginBottom: 2,
+                }}
+              >
+                👁️ My Impact Tracker
+              </Text>
+              <Text style={{ fontSize: 11, color: "#0c4a6e" }}>
+                See your donations matched to org updates by allocation type
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("ExportImpact")}
+              style={styles.demoBannerButton}
+            >
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontWeight: "600",
+                  color: "#059669",
+                  marginBottom: 2,
+                }}
+              >
+                📥 Export Your Trail
+              </Text>
+              <Text style={{ fontSize: 11, color: "#065f46" }}>
+                Download JSON/CSV for independent audit or tax records
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        <View style={{ height: 16 }} />
         <Text style={{ fontWeight: "700", marginBottom: 8, color: text }}>
           Recent updates
         </Text>
@@ -215,5 +269,21 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: "center",
     marginRight: 8,
+  },
+  demoBanner: {
+    backgroundColor: "#f0f9ff",
+    borderWidth: 2,
+    borderColor: "#0369a1",
+    borderRadius: 12,
+    padding: 14,
+  },
+  demoBannerButton: {
+    backgroundColor: "#fff",
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: "#0369a1",
   },
 });
