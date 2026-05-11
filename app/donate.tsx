@@ -300,7 +300,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
   },
-  presetTextActive: {
   input: {
     borderWidth: 1,
     borderColor: "#ddd",
