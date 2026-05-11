@@ -28,6 +28,8 @@ export default function DonateScreen() {
   const bg = useThemeColor({}, "background");
   const text = useThemeColor({}, "text");
   const primary = useThemeColor({}, "primary");
+  const secondary = useThemeColor({}, "secondary");
+  const surface = useThemeColor({}, "surface");
 
   const [amount, setAmount] = useState("");
   const [note, setNote] = useState("");
@@ -92,47 +94,47 @@ export default function DonateScreen() {
               ✨ Your Impact: ${donationAmount.toFixed(2)}
             </Text>
             <View style={styles.metricsGrid}>
-              <View style={styles.metric}>
+              <View style={[styles.metric, { backgroundColor: surface }]}>
                 <Text style={styles.metricEmoji}>
                   {IMPACT_METRICS.meals.emoji}
                 </Text>
                 <Text style={[styles.metricValue, { color: text }]}>
                   {impacts.meals}
                 </Text>
-                <Text style={styles.metricLabel}>
+                <Text style={[styles.metricLabel, { color: secondary }]}>
                   {IMPACT_METRICS.meals.label}
                 </Text>
               </View>
-              <View style={styles.metric}>
+              <View style={[styles.metric, { backgroundColor: surface }]}>
                 <Text style={styles.metricEmoji}>
                   {IMPACT_METRICS.trees.emoji}
                 </Text>
                 <Text style={[styles.metricValue, { color: text }]}>
                   {impacts.trees}
                 </Text>
-                <Text style={styles.metricLabel}>
+                <Text style={[styles.metricLabel, { color: secondary }]}>
                   {IMPACT_METRICS.trees.label}
                 </Text>
               </View>
-              <View style={styles.metric}>
+              <View style={[styles.metric, { backgroundColor: surface }]}>
                 <Text style={styles.metricEmoji}>
                   {IMPACT_METRICS.hours.emoji}
                 </Text>
                 <Text style={[styles.metricValue, { color: text }]}>
                   {impacts.hours}
                 </Text>
-                <Text style={styles.metricLabel}>
+                <Text style={[styles.metricLabel, { color: secondary }]}>
                   {IMPACT_METRICS.hours.label}
                 </Text>
               </View>
-              <View style={styles.metric}>
+              <View style={[styles.metric, { backgroundColor: surface }]}>
                 <Text style={styles.metricEmoji}>
                   {IMPACT_METRICS.families.emoji}
                 </Text>
                 <Text style={[styles.metricValue, { color: text }]}>
                   {impacts.families}
                 </Text>
-                <Text style={styles.metricLabel}>
+                <Text style={[styles.metricLabel, { color: secondary }]}>
                   {IMPACT_METRICS.families.label}
                 </Text>
               </View>
@@ -157,7 +159,7 @@ export default function DonateScreen() {
               <Text
                 style={[
                   styles.presetText,
-                  amount === String(preset) && styles.presetTextActive,
+                  { color: amount === String(preset) ? primary : secondary },
                 ]}
               >
                 ${preset}
@@ -256,7 +258,6 @@ const styles = StyleSheet.create({
   },
   metric: {
     width: "48%",
-    backgroundColor: "#fff",
     borderRadius: 10,
     padding: 12,
     marginBottom: 8,
@@ -274,7 +275,6 @@ const styles = StyleSheet.create({
   },
   metricLabel: {
     fontSize: 10,
-    color: "#666",
     marginTop: 4,
     textAlign: "center",
   },
@@ -299,11 +299,8 @@ const styles = StyleSheet.create({
   presetText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#666",
   },
   presetTextActive: {
-    color: "#0369a1",
-  },
   input: {
     borderWidth: 1,
     borderColor: "#ddd",
